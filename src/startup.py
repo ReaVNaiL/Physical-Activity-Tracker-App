@@ -37,7 +37,6 @@ def start_up():
     csv_object = lc.load_csv(csv_sample_path)
     
     print(csv_object)
-    
-    
+       
 if __name__ == "__main__":
     start_up()
