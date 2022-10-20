@@ -76,7 +76,7 @@ class MainWindow():
         '''
         root.mainloop()
     
-    def add_button(self, text, command, color="#F7F7F7", font=("Arial", 12), width=10, height=2):
+    def add_button(self, text, command, color="#F7F7F7", font=("Arial", 12), width=15, height=2):
         '''
         Adds a button to the window
         @param text: The text to be displayed on the button
