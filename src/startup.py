@@ -1,5 +1,4 @@
 # Importing the necessary modules
-from importlib.resources import path
 import sys
 import os
 
@@ -22,7 +21,7 @@ def start_up():
     csv_object = lc.load_csv(csv_sample_path)
     # lc.parse_csv(csv_object, "summary")
     
-    # print(csv_object["Acc magnitude avg"])
+    print(csv_object[:5])
     
     
 if __name__ == "__main__":
