@@ -2,6 +2,10 @@
 __pycache__/
 *.py[cod]
 
+# XML
+*.xml
+*.iml
+
 # Unit test / coverage reports
 .tox/
 .coverage
