@@ -13,7 +13,7 @@
 import datetime
 from dataclasses import dataclass
 
-@dataclass(order=True)
+@dataclass(init=True, order=True)
 class DeviceDataModel:
     """ DeviceDataModel For DeviceData.csv Data """
     timezone: int
@@ -24,5 +24,6 @@ class DeviceDataModel:
     mobile_os: str = ""
     mobile_os_version: str = ""
     gtcs_algorithm_version: str = ""
-        
-        
+                  
+    def __iter__ (self):
+        return iter(self.__dict__.values())
