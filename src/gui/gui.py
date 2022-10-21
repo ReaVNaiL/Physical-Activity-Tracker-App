@@ -1,5 +1,4 @@
 from tkinter import *
-import tkinter
 from tkinter.filedialog import askopenfile
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -21,12 +20,14 @@ def import_csv() -> bool:
         isLoaded = True
         df = pd.read_csv(file)
         df.plot(x="Datetime (UTC)", y=["Acc magnitude avg"])
+        df.plot(x="Datetime (UTC)", y=["Temp avg"])
         plt.show()
     else:
         isLoaded = False
     return isLoaded
-
-
+def window_close():
+    root.quit()
+    
 class MainWindow():
     """ This will not build, it's just a placeholder """
     menu_bar = Menu(root)
@@ -45,6 +46,7 @@ class MainWindow():
         self.menu_bar.add_cascade(label="File", menu=file_menu)
         file_menu.add_command(
             label="Open", command=import_csv)
+        file_menu.add_command(label="Exit", command=window_close)
 
         # analysis menu
         timeSeries = Menu(self.menu_bar, tearoff=0)
@@ -56,26 +58,35 @@ class MainWindow():
         # self.add_button("Import CSV", import_csv)
         
         # Labels:
-        options_label = self.add_label("Options", font=("Arial", 20))
-        self.frame_in_screen(options_label,0,0)
+        options_label = self.add_label("Options", font=("Arial", 16))
+        self.frame_in_screen(options_label,1,0,(20,20),(20,20))
+
         #Stat Date Label and input box
         date_start_label = self.add_label("Start Date\t")
-        self.frame_in_screen(date_start_label,1,0)
-        date_start_label_box = self.add_input_box(root, 0, 1)
-        self.frame_in_screen(date_start_label_box,0,1)
+        self.frame_in_screen(date_start_label,2,0)
+        date_start_label_box = self.add_input_box(root)
+        self.frame_in_screen(date_start_label_box,2,1)
         
         #spacing between two labels
-        empty_spaces = self.create_empty_space(9)
-        for elem in empty_spaces:
-            self.frame_in_screen(elem, self.grid_x, self.grid_y)
-            self.grid_x += 1
+        # empty_spaces = self.create_empty_space(9)
+        # for elem in empty_spaces:
+        #     self.frame_in_screen(elem, self.grid_x, self.grid_y)
+        #     self.grid_x += 1
 
         #End Date Label and input box
-        date_ends_label = self.add_label("End Date")
-        self.frame_in_screen(date_ends_label,2,0)
+        date_ends_label = self.add_label("End Date\t")
+        self.frame_in_screen(date_ends_label,3,0,(20,20),(20,20))
         date_ends_label_box = self.add_input_box(root)
-        self.frame_in_screen(date_ends_label_box,2,1)
+        self.frame_in_screen(date_ends_label_box,3,1)
         
+        utc_date_label = self.add_label("Status")
+        self.frame_in_screen(utc_date_label,4,0)
+
+        # on = Image("/assets/on.png") 
+        # off = Image("/assets/off.png")
+
+        # status = on
+        # button = Button(root, image = self.button_switch_action(on,off,status) , bd = 0)
         ''' 
         Framing:
 
@@ -173,3 +184,14 @@ class MainWindow():
             empty.append(self.add_label("", font=("Arial", 16)))
         
         return empty
+
+    def button_switch_action(self,imageOn, imageOff, status):
+        # Create A Button
+        #on_button = Button(root, image = on, bd = 0,command = switch)
+        #on_button.pack(pady = 50)
+
+        if status:
+            return imageOn
+        else:
+            return imageOff
+                
