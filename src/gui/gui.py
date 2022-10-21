@@ -55,31 +55,40 @@ class MainWindow():
         # button.pack()
         # self.add_button("Import CSV", import_csv)
         # Labels:
-        testing = self.add_label("\tDate Start\t")
-        testing2 = self.add_label("\tDate Ends\t")
-        testing_box = self.add_input_box(root, 0, 1)
-        sam = self.add_label("\tSam")
-        sam_box = self.add_input_box(root)
-        options_label = self.add_label("\tDate Ends\t")
+        options_label = self.add_label("Options", font=("Arial", 20))
+        self.frame_in_screen(options_label,0,0)
+        #Stat Date Label and input box
+        date_start_label = self.add_label("Start Date\t")
+        self.frame_in_screen(date_start_label,1,0)
+        date_start_label_box = self.add_input_box(root, 0, 1)
+        self.frame_in_screen(date_start_label_box,0,1)
         
-        # Framing:
+        #spacing between two labels
+        empty_spaces = self.create_empty_space(9)
+        for elem in empty_spaces:
+            self.frame_in_screen(elem, self.grid_x, self.grid_y)
+            self.grid_x += 1
+
+        #End Date Label and input box
+        date_ends_label = self.add_label("End Date")
+        self.frame_in_screen(date_ends_label,2,0)
+        date_ends_label_box = self.add_input_box(root)
+        self.frame_in_screen(date_ends_label_box,2,1)
+        
+        ''' 
+        Framing:
+
         empty_spaces = self.create_empty_space(9)
 
         for elem in empty_spaces:
             self.frame_in_screen(elem, self.grid_x, self.grid_y)
             self.grid_x += 1
+        '''
+        
         
         # self.frame_in_screen(empty_spaces[0], 0, 0)
         # self.frame_in_screen(empty_spaces[1], 1, 0)
-        self.grid_y += 1
-        self.frame_in_screen(testing, self.grid_x, 0)
-        self.grid_y += 1
-        self.frame_in_screen(testing_box, self.grid_x, 1)
-        self.grid_y += 1
-        self.frame_in_screen(testing2, self.grid_x, self.grid_y)
-        self.grid_y += 1
-        self.frame_in_screen(sam, self.grid_x+1, 0)
-        self.frame_in_screen(sam_box, self.grid_x+1, 1)
+
         
 
         
@@ -130,7 +139,7 @@ class MainWindow():
         @param font: The font of the text
         '''
         label = Label(root, text=text, bg=color, font=font)
-        return label
+        return label 
         
     def add_menu(self, menu, options):
         '''
