@@ -1,5 +1,4 @@
 # Importing the necessary modules
-import sys
 import os
 
 # Path: Physical-Activity-Tracker-App\src\

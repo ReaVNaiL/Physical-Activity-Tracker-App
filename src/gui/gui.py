@@ -1,4 +1,5 @@
 from tkinter import *
+import tkinter
 from tkinter.filedialog import askopenfile
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -29,6 +30,8 @@ def import_csv() -> bool:
 class MainWindow():
     """ This will not build, it's just a placeholder """
     menu_bar = Menu(root)
+    grid_x = 0
+    grid_y = 0
 
     def __init__(self, height, width, name, color="#F7F7F7"):
         self.set_window(height, width, name, color)
@@ -39,9 +42,9 @@ class MainWindow():
 
         # Data Menu
         file_menu = Menu(self.menu_bar, tearoff=0)
-        self.menu_bar.add_cascade(label="Data", menu=file_menu)
+        self.menu_bar.add_cascade(label="File", menu=file_menu)
         file_menu.add_command(
-            label="Options about Data will be added here", command=import_csv)
+            label="Open", command=import_csv)
 
         # analysis menu
         timeSeries = Menu(self.menu_bar, tearoff=0)
@@ -50,7 +53,37 @@ class MainWindow():
 
         # button = Button(root, text="Import CSV", command=import_csv)
         # button.pack()
-        self.add_button("Import CSV", import_csv)
+        # self.add_button("Import CSV", import_csv)
+        # Labels:
+        testing = self.add_label("\tDate Start\t")
+        testing2 = self.add_label("\tDate Ends\t")
+        testing_box = self.add_input_box(root, 0, 1)
+        sam = self.add_label("\tSam")
+        sam_box = self.add_input_box(root)
+        options_label = self.add_label("\tDate Ends\t")
+        
+        # Framing:
+        empty_spaces = self.create_empty_space(9)
+
+        for elem in empty_spaces:
+            self.frame_in_screen(elem, self.grid_x, self.grid_y)
+            self.grid_x += 1
+        
+        # self.frame_in_screen(empty_spaces[0], 0, 0)
+        # self.frame_in_screen(empty_spaces[1], 1, 0)
+        self.grid_y += 1
+        self.frame_in_screen(testing, self.grid_x, 0)
+        self.grid_y += 1
+        self.frame_in_screen(testing_box, self.grid_x, 1)
+        self.grid_y += 1
+        self.frame_in_screen(testing2, self.grid_x, self.grid_y)
+        self.grid_y += 1
+        self.frame_in_screen(sam, self.grid_x+1, 0)
+        self.frame_in_screen(sam_box, self.grid_x+1, 1)
+        
+
+        
+        # testing.pack()
 
     def set_window(self, height, width, name, color):
         '''
@@ -87,9 +120,9 @@ class MainWindow():
         @param height: The height of the button
         '''
         button = Button(root, text=text, command=command, bg=color, font=font, width=width, height=height)
-        button.pack()
+        return button
         
-    def add_label(self, text, color="#393E46", font=("Arial", 12)):
+    def add_label(self, text, color="#F7F7F7", font=("Arial", 12)):
         '''
         Adds a label to the window
         @param text: The text to be displayed on the label
@@ -97,7 +130,7 @@ class MainWindow():
         @param font: The font of the text
         '''
         label = Label(root, text=text, bg=color, font=font)
-        label.pack()
+        return label
         
     def add_menu(self, menu, options):
         '''
@@ -106,6 +139,24 @@ class MainWindow():
         '''
         return self.menu_bar.add_cascade(label=menu, menu=options)
         
+    def add_input_box(self, parent, pos_x = 0, pos_y = 0):
+        '''
+        Adds a text input
+        '''
+        new_entry = Entry(parent)
+        self.frame_in_screen(new_entry, pos_x, pos_y)
+        return new_entry
 
-
-
+    def frame_in_screen(self, element, pos_x = 0, pos_y = 0):
+        '''
+        Call
+        '''
+        element.grid(row=pos_x, column=pos_y)
+        
+    def create_empty_space(self, amount: int) -> list[Label]:
+        empty = []
+        
+        for i in range(amount):
+            empty.append(self.add_label("", font=("Arial", 16)))
+        
+        return empty
