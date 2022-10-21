@@ -55,24 +55,25 @@ class MainWindow():
         # button.pack()
         # self.add_button("Import CSV", import_csv)
         # Labels:
-        testing = self.add_label("\tDate Start\t")
-        testing2 = self.add_label("\tDate Ends\t")
+        testing = self.add_label("Date Start")
+        testing2 = self.add_label("Date Ends")
         testing_box = self.add_input_box(root, 0, 1)
         sam = self.add_label("\tSam")
         sam_box = self.add_input_box(root)
-        options_label = self.add_label("\tDate Ends\t")
+        options_label = self.add_label("Date Ends")
         
-        # Framing:
-        empty_spaces = self.create_empty_space(9)
+        # # Framing:
+        # empty_spaces = self.create_empty_space(9)
 
-        for elem in empty_spaces:
-            self.frame_in_screen(elem, self.grid_x, self.grid_y)
-            self.grid_x += 1
+        # for elem in empty_spaces:
+        #     self.frame_in_screen(elem, self.grid_x, self.grid_y)
+        #     self.grid_x += 1
         
         # self.frame_in_screen(empty_spaces[0], 0, 0)
         # self.frame_in_screen(empty_spaces[1], 1, 0)
         self.grid_y += 1
-        self.frame_in_screen(testing, self.grid_x, 0)
+        self.frame_in_screen(testing, self.grid_x, 0, padx=(150, 150), pady=(150, 150))
+        # testing.grid(padx=(150, 150), pady=(150, 150)) 
         self.grid_y += 1
         self.frame_in_screen(testing_box, self.grid_x, 1)
         self.grid_y += 1
@@ -147,11 +148,16 @@ class MainWindow():
         self.frame_in_screen(new_entry, pos_x, pos_y)
         return new_entry
 
-    def frame_in_screen(self, element, pos_x = 0, pos_y = 0):
+    def frame_in_screen(self, element, pos_x = 0, pos_y = 0, padx=(0,0), pady=(0,0)):
         '''
         Call
+        @param element: parent element
+        @param pos_x: The pos_x
+        @param pos_y: The pos_y
+        @param padx: Padding for the left and right of X
+        @param pady: Padding for the top and right of Y
         '''
-        element.grid(row=pos_x, column=pos_y)
+        element.grid(row=pos_x, column=pos_y, padx=padx, pady=pady)
         
     def create_empty_space(self, amount: int) -> list[Label]:
         empty = []
