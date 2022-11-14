@@ -66,7 +66,7 @@ if __name__ == "__main__":
     csv_sample_path = os.path.join(os.path.dirname(__file__), "../data/20200118/310/summary.csv")
 
     csv_object = load_csv(csv_sample_path)
-    new_list = parse_csv(csv_object, "summary") 
+    summary_file = parse_csv(csv_object, "summary") 
 
     # Print summary
     print("Summary List: ")
@@ -74,9 +74,9 @@ if __name__ == "__main__":
     avg = 0
     sum_total = 0
 
-    for elem in new_list:
+    for elem in summary_file:
         sum_total += elem.steps_count
         elem.eda_avg = round(elem.eda_avg, 2)
 
-    avg = sum_total / len(new_list)
+    avg = sum_total / len(summary_file)
     print("Average for the steps count is:", avg)
