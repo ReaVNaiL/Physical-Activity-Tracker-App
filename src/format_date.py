@@ -17,8 +17,6 @@ def format_utc_to_standard(datetimeUTC: str):
     standard_time = date.strptime(datetimeUTC, '%Y-%m-%dT%H:%M:%SZ').strftime('%m/%d/%Y %I:%M:%S %p')
     return standard_time
     
-    
-     
 if __name__ == "__main__":
     os.system("cls")
     csv_sample_path = os.path.join(os.path.dirname(__file__), "../data/20200118/310/summary.csv")
