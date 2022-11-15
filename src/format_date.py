@@ -46,7 +46,7 @@ def get_date_range(start_date: str, end_date: str):
         
         # Compare the date to the start and end date
         if new_date >= start_date and new_date <= end_date:
-            data_range.append(new_date)
+            data_range.append(folder)
             
     return data_range
     
