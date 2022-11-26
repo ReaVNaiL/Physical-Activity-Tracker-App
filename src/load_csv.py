@@ -30,6 +30,8 @@ def load_csv(path):
 def parse_csv(csv, name):
     if name == "summary":
         return parse_summary_into_list(csv)
+    elif name == "metadata": # TBD
+        return parse_metadata_into_list(csv)
 
 
 def parse_summary_into_list(csv_data: pd.DataFrame):
@@ -137,7 +139,7 @@ if __name__ == "__main__":
     start_date = "2020-01-18T23:48:00Z"
     start_date = fd.format_utc_to_standard(start_date)
 
-    end_date = "2020-01-19T23:48:00Z"
+    end_date = "2020-01-20T23:48:00Z"
     end_date = fd.format_utc_to_standard(end_date)
 
     date_range = fd.get_date_range(start_date, end_date)
@@ -167,11 +169,11 @@ if __name__ == "__main__":
         '''
         Building the dictionary:
         '''
-        date = get_date_from_path(path)
+        date = get_date_from_path(path) 
         device = get_device_from_path(path)
         new_summary_list.file_contents_dict[f"{date}+{device}"] = summary_file
 
-    print("\nNew Summary List: ")
-    for summary in new_summary_list.file_contents:
-        print(summary)
-        print("\n")
+    # print("\nNew Summary List: ")
+    # for summary in new_summary_list.file_contents:
+    #     print(summary)
+    #     print("\n")
