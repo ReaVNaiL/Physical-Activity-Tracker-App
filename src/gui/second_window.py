@@ -9,6 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import sys
 
 
 class Ui_secondWindow(object):
@@ -16,15 +17,21 @@ class Ui_secondWindow(object):
         secondWindow.setObjectName("secondWindow")
         secondWindow.resize(826, 465)
         self.second_window_central_widget = QtWidgets.QWidget(secondWindow)
-        self.second_window_central_widget.setObjectName("second_window_central_widget")
-        self.second_window_main_frame = QtWidgets.QFrame(self.second_window_central_widget)
-        self.second_window_main_frame.setGeometry(QtCore.QRect(0, 10, 811, 421))
-        self.second_window_main_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.second_window_central_widget.setObjectName(
+            "second_window_central_widget")
+        self.second_window_main_frame = QtWidgets.QFrame(
+            self.second_window_central_widget)
+        self.second_window_main_frame.setGeometry(
+            QtCore.QRect(0, 10, 811, 421))
+        self.second_window_main_frame.setFrameShape(
+            QtWidgets.QFrame.StyledPanel)
         self.second_window_main_frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.second_window_main_frame.setObjectName("second_window_main_frame")
-        self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.second_window_main_frame)
+        self.verticalLayout_4 = QtWidgets.QVBoxLayout(
+            self.second_window_main_frame)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
-        self.second_window_inner_frame_without_save = QtWidgets.QFrame(self.second_window_main_frame)
+        self.second_window_inner_frame_without_save = QtWidgets.QFrame(
+            self.second_window_main_frame)
         font = QtGui.QFont()
         font.setFamily("Georgia")
         font.setPointSize(8)
@@ -32,27 +39,44 @@ class Ui_secondWindow(object):
         font.setItalic(False)
         font.setWeight(50)
         self.second_window_inner_frame_without_save.setFont(font)
-        self.second_window_inner_frame_without_save.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.second_window_inner_frame_without_save.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.second_window_inner_frame_without_save.setObjectName("second_window_inner_frame_without_save")
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self.second_window_inner_frame_without_save)
+        self.second_window_inner_frame_without_save.setFrameShape(
+            QtWidgets.QFrame.StyledPanel)
+        self.second_window_inner_frame_without_save.setFrameShadow(
+            QtWidgets.QFrame.Raised)
+        self.second_window_inner_frame_without_save.setObjectName(
+            "second_window_inner_frame_without_save")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(
+            self.second_window_inner_frame_without_save)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.second_window_left_colum_frame = QtWidgets.QFrame(self.second_window_inner_frame_without_save)
-        self.second_window_left_colum_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.second_window_left_colum_frame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.second_window_left_colum_frame.setObjectName("second_window_left_colum_frame")
-        self.second_window_header_list = QtWidgets.QListWidget(self.second_window_left_colum_frame)
-        self.second_window_header_list.setGeometry(QtCore.QRect(10, 10, 256, 291))
+        self.second_window_left_colum_frame = QtWidgets.QFrame(
+            self.second_window_inner_frame_without_save)
+        self.second_window_left_colum_frame.setFrameShape(
+            QtWidgets.QFrame.StyledPanel)
+        self.second_window_left_colum_frame.setFrameShadow(
+            QtWidgets.QFrame.Raised)
+        self.second_window_left_colum_frame.setObjectName(
+            "second_window_left_colum_frame")
+        self.second_window_header_list = QtWidgets.QListWidget(
+            self.second_window_left_colum_frame)
+        self.second_window_header_list.setGeometry(
+            QtCore.QRect(10, 10, 256, 291))
         self.second_window_header_list.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-"font: 12pt \"Arial\";")
-        self.second_window_header_list.setObjectName("second_window_header_list")
+                                                     "font: 12pt \"Arial\";")
+        self.second_window_header_list.setObjectName(
+            "second_window_header_list")
         self.horizontalLayout.addWidget(self.second_window_left_colum_frame)
-        self.second_window_arrow_button_frame = QtWidgets.QFrame(self.second_window_inner_frame_without_save)
-        self.second_window_arrow_button_frame.setStyleSheet("font: 75 14pt \"Arial\";")
-        self.second_window_arrow_button_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.second_window_arrow_button_frame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.second_window_arrow_button_frame.setObjectName("second_window_arrow_button_frame")
-        self.layoutWidget = QtWidgets.QWidget(self.second_window_arrow_button_frame)
+        self.second_window_arrow_button_frame = QtWidgets.QFrame(
+            self.second_window_inner_frame_without_save)
+        self.second_window_arrow_button_frame.setStyleSheet(
+            "font: 75 14pt \"Arial\";")
+        self.second_window_arrow_button_frame.setFrameShape(
+            QtWidgets.QFrame.StyledPanel)
+        self.second_window_arrow_button_frame.setFrameShadow(
+            QtWidgets.QFrame.Raised)
+        self.second_window_arrow_button_frame.setObjectName(
+            "second_window_arrow_button_frame")
+        self.layoutWidget = QtWidgets.QWidget(
+            self.second_window_arrow_button_frame)
         self.layoutWidget.setGeometry(QtCore.QRect(60, 10, 131, 68))
         self.layoutWidget.setObjectName("layoutWidget")
         self.top_arrows_frame = QtWidgets.QVBoxLayout(self.layoutWidget)
@@ -64,7 +88,8 @@ class Ui_secondWindow(object):
         self.top_left_arrow = QtWidgets.QPushButton(self.layoutWidget)
         self.top_left_arrow.setObjectName("top_left_arrow")
         self.top_arrows_frame.addWidget(self.top_left_arrow)
-        self.layoutWidget_2 = QtWidgets.QWidget(self.second_window_arrow_button_frame)
+        self.layoutWidget_2 = QtWidgets.QWidget(
+            self.second_window_arrow_button_frame)
         self.layoutWidget_2.setGeometry(QtCore.QRect(50, 110, 141, 68))
         self.layoutWidget_2.setObjectName("layoutWidget_2")
         self.middle_arrows_frame = QtWidgets.QVBoxLayout(self.layoutWidget_2)
@@ -76,7 +101,8 @@ class Ui_secondWindow(object):
         self.middle_left_arrow = QtWidgets.QPushButton(self.layoutWidget_2)
         self.middle_left_arrow.setObjectName("middle_left_arrow")
         self.middle_arrows_frame.addWidget(self.middle_left_arrow)
-        self.layoutWidget_3 = QtWidgets.QWidget(self.second_window_arrow_button_frame)
+        self.layoutWidget_3 = QtWidgets.QWidget(
+            self.second_window_arrow_button_frame)
         self.layoutWidget_3.setGeometry(QtCore.QRect(50, 210, 141, 68))
         self.layoutWidget_3.setObjectName("layoutWidget_3")
         self.buttom_arrows_frame = QtWidgets.QVBoxLayout(self.layoutWidget_3)
@@ -89,27 +115,45 @@ class Ui_secondWindow(object):
         self.buttom_left_arrow.setObjectName("buttom_left_arrow")
         self.buttom_arrows_frame.addWidget(self.buttom_left_arrow)
         self.horizontalLayout.addWidget(self.second_window_arrow_button_frame)
-        self.second_window_right_column_frame = QtWidgets.QFrame(self.second_window_inner_frame_without_save)
-        self.second_window_right_column_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.second_window_right_column_frame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.second_window_right_column_frame.setObjectName("second_window_right_column_frame")
-        self.second_window_top_list = QtWidgets.QListWidget(self.second_window_right_column_frame)
+        self.second_window_right_column_frame = QtWidgets.QFrame(
+            self.second_window_inner_frame_without_save)
+        self.second_window_right_column_frame.setFrameShape(
+            QtWidgets.QFrame.StyledPanel)
+        self.second_window_right_column_frame.setFrameShadow(
+            QtWidgets.QFrame.Raised)
+        self.second_window_right_column_frame.setObjectName(
+            "second_window_right_column_frame")
+        self.second_window_top_list = QtWidgets.QListWidget(
+            self.second_window_right_column_frame)
         self.second_window_top_list.setGeometry(QtCore.QRect(10, 0, 231, 91))
-        self.second_window_top_list.setStyleSheet("background-color: rgb(255, 255, 255);")
+        self.second_window_top_list.setStyleSheet(
+            "background-color: rgb(255, 255, 255);")
         self.second_window_top_list.setObjectName("second_window_top_list")
-        self.second_window_middle_list = QtWidgets.QListWidget(self.second_window_right_column_frame)
-        self.second_window_middle_list.setGeometry(QtCore.QRect(10, 100, 231, 91))
-        self.second_window_middle_list.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.second_window_middle_list.setObjectName("second_window_middle_list")
-        self.second_window_buttom_list = QtWidgets.QListWidget(self.second_window_right_column_frame)
-        self.second_window_buttom_list.setGeometry(QtCore.QRect(10, 200, 231, 91))
-        self.second_window_buttom_list.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.second_window_buttom_list.setObjectName("second_window_buttom_list")
+        self.second_window_middle_list = QtWidgets.QListWidget(
+            self.second_window_right_column_frame)
+        self.second_window_middle_list.setGeometry(
+            QtCore.QRect(10, 100, 231, 91))
+        self.second_window_middle_list.setStyleSheet(
+            "background-color: rgb(255, 255, 255);")
+        self.second_window_middle_list.setObjectName(
+            "second_window_middle_list")
+        self.second_window_buttom_list = QtWidgets.QListWidget(
+            self.second_window_right_column_frame)
+        self.second_window_buttom_list.setGeometry(
+            QtCore.QRect(10, 200, 231, 91))
+        self.second_window_buttom_list.setStyleSheet(
+            "background-color: rgb(255, 255, 255);")
+        self.second_window_buttom_list.setObjectName(
+            "second_window_buttom_list")
         self.horizontalLayout.addWidget(self.second_window_right_column_frame)
-        self.verticalLayout_4.addWidget(self.second_window_inner_frame_without_save)
-        self.second_window_save_button = QtWidgets.QPushButton(self.second_window_main_frame)
-        self.second_window_save_button.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.second_window_save_button.setObjectName("second_window_save_button")
+        self.verticalLayout_4.addWidget(
+            self.second_window_inner_frame_without_save)
+        self.second_window_save_button = QtWidgets.QPushButton(
+            self.second_window_main_frame)
+        self.second_window_save_button.setStyleSheet(
+            "background-color: rgb(255, 255, 255);")
+        self.second_window_save_button.setObjectName(
+            "second_window_save_button")
         self.verticalLayout_4.addWidget(self.second_window_save_button)
         secondWindow.setCentralWidget(self.second_window_central_widget)
         self.menubar = QtWidgets.QMenuBar(secondWindow)
@@ -132,7 +176,8 @@ class Ui_secondWindow(object):
         self.middle_left_arrow.setText(_translate("secondWindow", "<"))
         self.buttom_right_arrow.setText(_translate("secondWindow", ">"))
         self.buttom_left_arrow.setText(_translate("secondWindow", "<"))
-        self.second_window_save_button.setText(_translate("secondWindow", "Save"))
+        self.second_window_save_button.setText(
+            _translate("secondWindow", "Save"))
 
 
 if __name__ == "__main__":

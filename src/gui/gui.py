@@ -4,6 +4,7 @@ from matplotlib import pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 # from matplotlib.figure import Figure
 from numpy import random
+from second_window import Ui_secondWindow
 
 
 # class Canvas(FigureCanvas):
@@ -14,6 +15,12 @@ from numpy import random
 
 
 class Ui_MainWindow(object):
+    def openWindow(self):
+        self.window = QtWidgets.QMainWindow()
+        self.ui = Ui_secondWindow()
+        self.ui.setupUi(self.window)
+        self.window.show()
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1755, 773)
@@ -110,7 +117,8 @@ class Ui_MainWindow(object):
             self.frame2)
         self.left_column_top_box_button_container_2.setObjectName(
             "left_column_top_box_button_container_2")
-        self.save_all_button = QtWidgets.QPushButton(self.frame2)
+        self.save_all_button = QtWidgets.QPushButton(
+            self.frame2, clicked=lambda: self.openWindow())
         self.save_all_button.setStyleSheet(
             "background-color: rgb(255, 255, 255);")
         self.save_all_button.setObjectName("save_all_button")
