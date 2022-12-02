@@ -1,133 +1,105 @@
 # type: ignore
 # CSV Data Loader
 import os
+import helpers.format_date as fd
+import pandas as pd
+
+# Classes 
 from models.csv_models.BaseSummaryModel import BaseSummaryModel
 from models.csv_models.DeviceDataModel import DeviceDataModel
 from models.csv_models.BaseSummaryFileList import BaseSummaryFileList
-import format_date as fd
-import pandas as pd
+from src.gui.models.InputModel import InputModel
+class DataHandler:
+    def __init__(self, input_model: InputModel):
+        self.file_index = input_model.file_index
+        self.subject_id = input_model.subject_id
+        self.device_OS = input_model.device_OS
+        self.is_standard_time = input_model.is_standard_time
+        self.start_date = input_model.date_range[0]
+        self.end_date = input_model.date_range[1]
 
+    def load_csv(self, path):
+        df = pd.read_csv(path)
+        return df
 
-# @dataclass(order=True)
-# class BaseSummaryModel:
-#     """ BaseSummaryModel For Summary.csv Data """
-# UTC_date: str
-# timezone: int
-# unix_time_stamp: str
-# acc_magnitude_avg: float
-# eda_avg: float
-# temp_avg: float
-# movement_intensity: int
-# steps_count: int
-# rest: int
-# on_wrist: bool
+    def parse_csv(self, csv, name):
+        if name == "summary":
+            return self.parse_data_summary(csv)
+        # elif name == "metadata": # TBD
+            # return self.parse_metadata_into_list(csv)
+    def parse_data_summary(self, csv_data: pd.DataFrame):
+        # Create a list of BaseSummaryModel objects
+        data_summary = [BaseSummaryModel]
+        data_summary.pop()
 
-def load_csv(path):
-    df = pd.read_csv(path)
-    return df
+        csv_columns = [str(columns) for columns in csv_data.columns]
 
+        # For each row add a BaseSummaryModel object to the list
+        for index, row in csv_data.iterrows():
+            # For each column in the row, create a BaseSummaryModel object
+            summary = BaseSummaryModel()
 
-def parse_csv(csv, name):
-    if name == "summary":
-        return parse_summary_into_list(csv)
-    elif name == "metadata": # TBD
-        return parse_metadata_into_list(csv)
+            # Fill the class
+            class_iter = 0
+            for property in summary.__dict__:
+                summary.__dict__[property] = row[csv_columns[class_iter]]
+                class_iter += 1
 
+            # # Print each item in summary
+            # for item in summary:
+            #     print(item)
 
-def parse_summary_into_list(csv_data: pd.DataFrame):
-    # Create a list of BaseSummaryModel objects
-    summary_list = [BaseSummaryModel]
-    summary_list.pop()
+            # print(f"Class Properties: {dir(summary)}")
+            # print("\n\n")
 
-    csv_columns = [str(columns) for columns in csv_data.columns]
+            # From UTC to Standard Time
+            summary.UTC_date = fd.format_utc_to_standard(summary.UTC_date)
 
-    # For each row add a BaseSummaryModel object to the list
-    for index, row in csv_data.iterrows():
-        # For each column in the row, create a BaseSummaryModel object
-        summary = BaseSummaryModel()
+            # Add the summary object to the list
+            data_summary.append(summary)
 
-        # Fill the class
-        class_iter = 0
-        for property in summary.__dict__:
-            summary.__dict__[property] = row[csv_columns[class_iter]]
-            class_iter += 1
+        return data_summary
 
-        # # Print each item in summary
-        # for item in summary:
-        #     print(item)
+    def get_path_list(self, date_range: list[str], file_index: str):
+        '''
+        Given a list of dates, return a list of paths to the file_index.csv files
+        i.e: file_index = "summary" or "metadata"
+        The path structure is as follows:
+        /data/{date}/{device}/{file_index}.csv
+        '''
+        path_list = []
 
-        # print(f"Class Properties: {dir(summary)}")
-        # print("\n\n")
+        # for each folder in the date range
+        for date in date_range:
+            # Get the path of the data folder
+            data_path = os.path.join(os.path.dirname(__file__), "..\data")
 
-        # From UTC to Standard Time
-        summary.UTC_date = fd.format_utc_to_standard(summary.UTC_date)
+            # Get the list of devices in the data folder
+            device_folders = os.listdir(os.path.join(data_path, date))
 
-        # Add the summary object to the list
-        summary_list.append(summary)
+            # For each device folder, get the path to the file_index.csv file
+            for device in device_folders:
+                path_list.append(os.path.join(
+                    data_path, date, device, f"{file_index}.csv"))
 
-    return summary_list
+        return path_list
 
+    def get_date_from_path(self, path):
+        '''
+        Given a path, return the date of the file
+        '''
+        return path.split("\\")[-3]
 
-def get_path_list(date_range: list[str], file_index: str):
-    '''
-    Given a list of dates, return a list of paths to the file_index.csv files
-    i.e: file_index = "summary" or "metadata"
-    The path structure is as follows:
-    /data/{date}/{device}/{file_index}.csv
-    '''
-    path_list = []
-
-    # for each folder in the date range
-    for date in date_range:
-        # Get the path of the data folder
-        data_path = os.path.join(os.path.dirname(__file__), "..\data")
-
-        # Get the list of devices in the data folder
-        device_folders = os.listdir(os.path.join(data_path, date))
-
-        # For each device folder, get the path to the file_index.csv file
-        for device in device_folders:
-            path_list.append(os.path.join(
-                data_path, date, device, f"{file_index}.csv"))
-
-    return path_list
-
-
-def get_date_from_path(path):
-    '''
-    Given a path, return the date of the file
-    '''
-    return path.split("\\")[-3]
-
-
-def get_device_from_path(path):
-    '''
-    Given a path, return the device of the file
-    '''
-    return path.split("\\")[-2]
+    def get_device_from_path(self, path):
+        '''
+        Given a path, return the device of the file
+        '''
+        return path.split("\\")[-2]
 
 
 # Testing only
 if __name__ == "__main__":
     os.system("cls")
-    # csv_sample_path = os.path.join(os.path.dirname(__file__), "../data/20200118/310/summary.csv")
-
-    # csv_object = load_csv(csv_sample_path)
-    # summary_file = parse_csv(csv_object, "summary")
-
-    # # Print summary
-    # print("Summary List: ")
-
-    # avg = 0
-    # sum_total = 0
-
-    # for elem in summary_file:
-    #     sum_total += elem.steps_count
-    #     elem.eda_avg = round(elem.eda_avg, 2)
-
-    # avg = sum_total / len(summary_file)
-    # print("Average for the steps count is:", avg)
-
     # DONE: Given a date range, parse all CSV files into a list of BaseSummaryModel objects
 
     # file type:
@@ -143,7 +115,11 @@ if __name__ == "__main__":
     end_date = fd.format_utc_to_standard(end_date)
 
     date_range = fd.get_date_range(start_date, end_date)
-    path_list = get_path_list(date_range, index_file)
+
+    # Create the DataHandler object
+    data_handler = DataHandler()
+
+    path_list = data_handler.get_path_list(date_range, index_file)
 
     new_summary_list = BaseSummaryFileList()
 
@@ -158,16 +134,16 @@ if __name__ == "__main__":
         3- Append the list of BaseSummaryModel objects to the BaseSummaryFileList
         4- Optional: Assign the BaseSummaryFileList to a dictionary with the key being the date + device
         '''
-        csv_object = load_csv(path)
-        summary_file = parse_csv(csv_object, index_file)
-        new_summary_list.file_contents.append(summary_file)
+        csv_object = data_handler.load_csv(path)
+        # summary_file = data_handler.parse_csv(csv_object, index_file)
+        # new_summary_list.file_contents.append(summary_file)
 
-        '''
-        Building the dictionary:
-        '''
-        date = get_date_from_path(path) 
-        device = get_device_from_path(path)
-        new_summary_list.file_contents_dict[f"{date}+{device}"] = summary_file
+        # '''
+        # Building the dictionary:
+        # '''
+        # date = data_handler.get_date_from_path(path) 
+        # device = data_handler.get_device_from_path(path)
+        # new_summary_list.file_contents_dict[f"{date}+{device}"] = summary_file
 
     print("\nPath List: ")
     for path in path_list:

@@ -1,7 +1,5 @@
 from datetime import datetime as date
 import os
-from load_csv import *
-
 
 def get_dates(summary_list):
     print("Before: ", summary_list[0].UTC_date)
@@ -37,8 +35,8 @@ def get_date_range(start_date: str, end_date: str):
     start_date = start_date.split(" ")[0]
     end_date = end_date.split(" ")[0]
 
-    # Get the path of the data folder
-    data_path = os.path.join(os.path.dirname(__file__), "../data")
+    # Get the path of the data folder (helpers\src\../data == ../../data)
+    data_path = os.path.join(os.path.dirname(__file__), "../../data")
 
     # Get the list of dates in the data folder (YYYYMMDD)
     data_folders = os.listdir(data_path)
@@ -62,10 +60,10 @@ if __name__ == "__main__":
     csv_sample_path = os.path.join(os.path.dirname(
         __file__), "../data/20200118/310/summary.csv")
 
-    csv_object = load_csv(csv_sample_path)
-    new_list = parse_csv(csv_object, "summary")
+    # csv_object = load_csv(csv_sample_path)
+    # new_list = parse_csv(csv_object, "summary")
 
-    get_dates(new_list)
+    # get_dates(new_list)
 
     # Get the date range
     start_date = "2020-01-18T23:48:00Z"

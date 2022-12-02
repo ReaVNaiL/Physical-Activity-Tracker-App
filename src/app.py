@@ -5,7 +5,7 @@ import asyncio
 
 # Path: Physical-Activity-Tracker-App\src\
 from gui.visualizer import DataVisualizer
-from load_csv import load_csv
+from load_csv import DataHandler
 
 def start_up():
     # This function will be called when the app is started
