@@ -103,7 +103,7 @@ if __name__ == "__main__":
     # DONE: Given a date range, parse all CSV files into a list of BaseSummaryModel objects
 
     # file type:
-    index_file = "summary"
+    file_index = "summary"
 
     '''
     Testing the get_path_list function
@@ -119,7 +119,13 @@ if __name__ == "__main__":
     # Create the DataHandler object
     data_handler = DataHandler()
 
-    path_list = data_handler.get_path_list(date_range, index_file)
+    # Assign the variables to the DataHandler object
+    data_handler.file_index = file_index
+    data_handler.start_date = start_date
+    data_handler.end_date = end_date
+
+    # Get the list of paths
+    path_list = data_handler.get_path_list(date_range, file_index)
 
     new_summary_list = BaseSummaryFileList()
 
