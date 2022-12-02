@@ -80,7 +80,7 @@ def get_path_list(date_range: list[str], file_index: str):
     # for each folder in the date range
     for date in date_range:
         # Get the path of the data folder
-        data_path = os.path.join(os.path.dirname(__file__), "../data")
+        data_path = os.path.join(os.path.dirname(__file__), "..\data")
 
         # Get the list of devices in the data folder
         device_folders = os.listdir(os.path.join(data_path, date))
@@ -145,10 +145,6 @@ if __name__ == "__main__":
     date_range = fd.get_date_range(start_date, end_date)
     path_list = get_path_list(date_range, index_file)
 
-    print("\nPath List: ")
-    for path in path_list:
-        print("-", path)
-
     new_summary_list = BaseSummaryFileList()
 
     '''
@@ -172,6 +168,10 @@ if __name__ == "__main__":
         date = get_date_from_path(path) 
         device = get_device_from_path(path)
         new_summary_list.file_contents_dict[f"{date}+{device}"] = summary_file
+
+    print("\nPath List: ")
+    for path in path_list:
+        print("-", path)
 
     # print("\nNew Summary List: ")
     # for summary in new_summary_list.file_contents:
