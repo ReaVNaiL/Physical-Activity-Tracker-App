@@ -15,3 +15,6 @@ coverage.xml
 
 # Translations
 *.mo
+
+# Prettier
+.prettierrcc
