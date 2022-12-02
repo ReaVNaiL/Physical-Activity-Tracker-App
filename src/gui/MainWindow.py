@@ -1,23 +1,18 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from SecondWindow import Ui_secondWindow
 
 
-class Ui_MainWindow(object):
-    def openWindow(self):
-        self.window = QtWidgets.QMainWindow()
-        self.ui = Ui_secondWindow()
-        self.ui.setupUi(self.window)
-        self.window.show()
-
+class UI_MainWindow(object):
     def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1755, 773)
-        MainWindow.setStyleSheet("")
+        self.MainWindow = MainWindow
+        
+        self.MainWindow.setObjectName("MainWindow")
+        self.MainWindow.resize(1755, 773)
+        self.MainWindow.setStyleSheet("")
 
         """"
         # Main Container
         """
-        self.main_widget = QtWidgets.QWidget(MainWindow)
+        self.main_widget = QtWidgets.QWidget(self.MainWindow)
         self.main_widget.setStyleSheet("")
         self.main_widget.setObjectName("main_widget")
 
@@ -112,7 +107,7 @@ class Ui_MainWindow(object):
         """
         self.layout_dropdown_widget = QtWidgets.QWidget(self.frame_2)
         self.layout_dropdown_widget.setGeometry(QtCore.QRect(0, 10, 281, 80))
-        self.layout_dropdown_widget.setObjectName("layoutWidget_2")
+        self.layout_dropdown_widget.setObjectName("layout_dropdown_widget")
         
         
         """
@@ -126,10 +121,6 @@ class Ui_MainWindow(object):
         """
         # Dropdown Menu Items
         """
-        self.device_dropdown = QtWidgets.QComboBox(self.layout_dropdown_widget)
-        self.device_dropdown.setObjectName("device_dropdown")
-        self.dropdown_menu.addWidget(self.device_dropdown)
-        
         self.index_dropdown = QtWidgets.QComboBox(self.layout_dropdown_widget)
         self.index_dropdown.setObjectName("index_dropdown")
         self.dropdown_menu.addWidget(self.index_dropdown)
@@ -137,6 +128,10 @@ class Ui_MainWindow(object):
         self.subject_dropdown = QtWidgets.QComboBox(self.layout_dropdown_widget)
         self.subject_dropdown.setObjectName("subject_dropdown")
         self.dropdown_menu.addWidget(self.subject_dropdown)
+        
+        self.device_dropdown = QtWidgets.QComboBox(self.layout_dropdown_widget)
+        self.device_dropdown.setObjectName("device_dropdown")
+        self.dropdown_menu.addWidget(self.device_dropdown)
         
         
         """
@@ -170,7 +165,7 @@ class Ui_MainWindow(object):
         # Frame 1
         self.select_button = QtWidgets.QPushButton(self.frame_1)
         self.select_button.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.select_button.setObjectName("save_all_button_3")
+        self.select_button.setObjectName("select_button")
         
         self.select_button_container = QtWidgets.QVBoxLayout( self.frame_1)
         self.select_button_container.setObjectName("select_button_container")
@@ -192,38 +187,38 @@ class Ui_MainWindow(object):
         """
         # Menu Bar
         """
-        self.menu_bar = QtWidgets.QMenuBar(MainWindow)
+        self.menu_bar = QtWidgets.QMenuBar(self.MainWindow)
         self.menu_bar.setGeometry(QtCore.QRect(0, 0, 1755, 21))
-        self.menu_bar.setObjectName("menubar")
+        self.menu_bar.setObjectName("menu_bar")
 
-        self.status_bar = QtWidgets.QStatusBar(MainWindow)
-        self.status_bar.setObjectName("statusbar")
+        self.status_bar = QtWidgets.QStatusBar(self.MainWindow)
+        self.status_bar.setObjectName("status_bar")
         
-        self.action_import = QtWidgets.QAction(MainWindow)
-        self.action_import.setObjectName("actionImport")
+        self.action_import = QtWidgets.QAction(self.MainWindow)
+        self.action_import.setObjectName("action_import")
         
-        self.action_exit = QtWidgets.QAction(MainWindow)
-        self.action_exit.setObjectName("actionExit")
+        self.action_exit = QtWidgets.QAction(self.MainWindow)
+        self.action_exit.setObjectName("action_exit")
         
-        self.actionSave = QtWidgets.QAction(MainWindow)
-        self.actionSave.setObjectName("actionSave")
+        self.action_save = QtWidgets.QAction(self.MainWindow)
+        self.action_save.setObjectName("action_exit")
 
-        self.menuFile = QtWidgets.QMenu(self.menu_bar)
-        self.menuFile.setAutoFillBackground(False)
-        self.menuFile.setTearOffEnabled(False)
-        self.menuFile.setSeparatorsCollapsible(True)
-        self.menuFile.setObjectName("menuFile")
-        self.menuFile.addAction(self.actionSave)
-        self.menuFile.addAction(self.action_exit)
-        self.menuFile.addSeparator()
-        self.menu_bar.addAction(self.menuFile.menuAction())
+        self.menu_file = QtWidgets.QMenu(self.menu_bar)
+        self.menu_file.setAutoFillBackground(False)
+        self.menu_file.setTearOffEnabled(False)
+        self.menu_file.setSeparatorsCollapsible(True)
+        self.menu_file.setObjectName("menu_file")
+        self.menu_file.addAction(self.action_save)
+        self.menu_file.addAction(self.action_exit)
+        self.menu_file.addSeparator()
+        self.menu_bar.addAction(self.menu_file.menuAction())
         
-        MainWindow.setCentralWidget(self.main_widget)
-        MainWindow.setMenuBar(self.menu_bar)
-        MainWindow.setStatusBar(self.status_bar)
+        self.MainWindow.setCentralWidget(self.main_widget)
+        self.MainWindow.setMenuBar(self.menu_bar)
+        self.MainWindow.setStatusBar(self.status_bar)
         
-        self.set_ui_naming(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.set_ui_naming(self.MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(self.MainWindow)
 
     def set_ui_naming(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -238,16 +233,16 @@ class Ui_MainWindow(object):
         self.clear_button.setText(_translate("MainWindow", "Clear Data"))
         self.index_label.setText(_translate("MainWindow", "Index  "))
         self.date_range_label.setText(_translate("MainWindow", "Date Range"))
-        self.menuFile.setTitle(_translate("MainWindow", "File"))
+        self.menu_file.setTitle(_translate("MainWindow", "File"))
         self.action_import.setText(_translate("MainWindow", "Import"))
         self.action_exit.setText(_translate("MainWindow", "Exit"))
-        self.actionSave.setText(_translate("MainWindow", "Save"))
+        self.action_save.setText(_translate("MainWindow", "Save"))
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
+    ui = UI_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
