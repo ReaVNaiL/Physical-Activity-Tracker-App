@@ -1,0 +1,21 @@
+#main_widget {
+    background-image: url(:/gui/style/22264.png);
+}
+
+QMenuBar {
+    background-color: #e3dcdc;
+    color: red;
+    box-shadow: 1 1 1 1 #000000;
+}
+
+QPushButton {
+    color: #000000;
+    /* border-style: solid; */
+    /* border-radius: 5px; */
+    font-family: "Courier New";
+}
+
+QLabel {
+    color: #000000;
+    font-family: "Courier New";
+}
