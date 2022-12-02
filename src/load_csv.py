@@ -60,21 +60,24 @@ def parse_summary_into_list(csv_data: pd.DataFrame):
         
     return summary_list
 
-os.system("cls")
-csv_sample_path = os.path.join(os.path.dirname(__file__), "../data/20200118/310/summary.csv")
 
-csv_object = load_csv(csv_sample_path)
-new_list = parse_csv(csv_object, "summary") 
+# Testing only
+if __name__ == "__main__":
+    os.system("cls")
+    csv_sample_path = os.path.join(os.path.dirname(__file__), "../data/20200118/310/summary.csv")
 
-# Print summary
-print("Summary List: ")
+    csv_object = load_csv(csv_sample_path)
+    new_list = parse_csv(csv_object, "summary") 
 
-avg = 0
-sum_total = 0
+    # Print summary
+    print("Summary List: ")
 
-for elem in new_list:
-    sum_total += elem.steps_count
-    elem.eda_avg = round(elem.eda_avg, 2)
+    avg = 0
+    sum_total = 0
 
-avg = sum_total / len(new_list)
-print("Average for the steps count is:", avg)
+    for elem in new_list:
+        sum_total += elem.steps_count
+        elem.eda_avg = round(elem.eda_avg, 2)
+
+    avg = sum_total / len(new_list)
+    print("Average for the steps count is:", avg)
