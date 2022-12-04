@@ -14,9 +14,7 @@ class DataVisualizer:
         self.UI.setupUi(MainWindow)
         MainWindow.show()
         
-        # with open("src/gui/style/stylesheet.css", "r") as f:
-        #     app.setStyleSheet(f.read())
-            
+        
         # This Adds The Second Window  
         select_button = self.UI.select_button
         select_button.clicked.connect(self.open_helper_window)
