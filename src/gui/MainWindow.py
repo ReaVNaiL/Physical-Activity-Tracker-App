@@ -98,8 +98,7 @@ class UI_MainWindow(object):
         """
         self.bottom_left_f = QtWidgets.QFrame(self.main_widget)
         self.bottom_left_f.setGeometry(QtCore.QRect(50, 360, 381, 371))
-        self.bottom_left_f.setStyleSheet(
-            "background-color: rgb(255, 255, 255);")
+        self.bottom_left_f.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.bottom_left_f.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.bottom_left_f.setFrameShadow(QtWidgets.QFrame.Raised)
         self.bottom_left_f.setObjectName("bottom_left_f")
@@ -129,10 +128,8 @@ class UI_MainWindow(object):
         Widget Contents
         """
         self.graph_area_widget_contents = QtWidgets.QWidget()
-        self.graph_area_widget_contents.setGeometry(
-            QtCore.QRect(0, 0, 1229, 699))
-        self.graph_area_widget_contents.setObjectName(
-            "graph_area_widget_contents")
+        self.graph_area_widget_contents.setGeometry(QtCore.QRect(0, 0, 1229, 699))
+        self.graph_area_widget_contents.setObjectName("graph_area_widget_contents")
         self.graph_area.setWidget(self.graph_area_widget_contents)
 
         self.left_column_inner = QtWidgets.QFrame(self.top_left_f)
@@ -197,8 +194,7 @@ class UI_MainWindow(object):
         self.index_dropdown.setObjectName("index_dropdown")
         self.dropdown_menu.addWidget(self.index_dropdown)
 
-        self.subject_dropdown = QtWidgets.QComboBox(
-            self.layout_dropdown_widget)
+        self.subject_dropdown = QtWidgets.QComboBox(self.layout_dropdown_widget)
         self.subject_dropdown.setObjectName("subject_dropdown")
         self.dropdown_menu.addWidget(self.subject_dropdown)
 
@@ -218,28 +214,26 @@ class UI_MainWindow(object):
         # Start Date
         self.start_date = QtWidgets.QDateTimeEdit(self.time_dates_container)
         self.start_date.setDateTime(QtCore.QDateTime(
-            QtCore.QDate(2022, 1, 1), QtCore.QTime(0, 0, 0)))
+            QtCore.QDate(2020, 1, 18), QtCore.QTime(0, 0, 0)))
         self.start_date.setObjectName("start_date")
 
         # End Date
         self.end_date = QtWidgets.QDateTimeEdit(self.time_dates_container)
-        self.end_date.setDateTime(QtCore.QDateTime(
-            QtCore.QDate(2022, 1, 1), QtCore.QTime(0, 0, 0)))
+        self.end_date.setDateTime(QtCore.QDateTime(QtCore.QDate(2020, 1, 21), QtCore.QTime(0, 0, 0)))
         self.end_date.setObjectName("end_date")
 
         # Time Range
         self.time_converter_check_box = QtWidgets.QCheckBox(self.frame_2)
-        self.time_converter_check_box.setGeometry(
-            QtCore.QRect(0, 130, 121, 16))
+        self.time_converter_check_box.setGeometry(QtCore.QRect(0, 130, 121, 16))
         self.time_converter_check_box.setObjectName("time_converter_check_box")
-
+        self.time_converter_check_box.setChecked(True)
+        
         """
         # UI Buttons Container
         """
         # Frame 1
         self.select_button = QtWidgets.QPushButton(self.frame_1)
-        self.select_button.setStyleSheet(
-            "background-color: rgb(255, 255, 255);")
+        self.select_button.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.select_button.setObjectName("select_button")
 
         self.select_button_container = QtWidgets.QVBoxLayout(self.frame_1)
@@ -249,15 +243,13 @@ class UI_MainWindow(object):
         # Frame 2
         self.import_button = QtWidgets.QPushButton(self.frame_3)
         self.import_button.setGeometry(QtCore.QRect(9, 9, 381, 16))
-        self.import_button.setStyleSheet(
-            "background-color: rgb(255, 255, 255);")
+        self.import_button.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.import_button.setObjectName("import_button")
 
         # Frame 3
         self.clear_button = QtWidgets.QPushButton(self.frame_3)
         self.clear_button.setGeometry(QtCore.QRect(9, 31, 381, 16))
-        self.clear_button.setStyleSheet(
-            "background-color: rgb(255, 255, 255);")
+        self.clear_button.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.clear_button.setObjectName("clear_button")
 
         """
@@ -302,8 +294,7 @@ class UI_MainWindow(object):
         # Text Generation
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.select_button.setText(_translate("MainWindow", "Save"))
-        self.time_converter_check_box.setText(
-            _translate("MainWindow", "Standard Time"))
+        self.time_converter_check_box.setText(_translate("MainWindow", "Standard Time"))
         self.device_label.setText(_translate("MainWindow", "Device"))
         self.subject_label.setText(_translate("MainWindow", "Subject  "))
         self.import_button.setText(_translate("MainWindow", "Import Data"))

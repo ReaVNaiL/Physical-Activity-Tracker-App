@@ -3,8 +3,7 @@ from PyQt5 import QtWidgets
 from gui.MainWindow import UI_MainWindow
 from gui.SecondWindow import UI_SecondWindow
 import pyqtgraph as pg
-from PyQt5.QtWidgets import QFormLayout
-from PyQt5.QtWidgets import QApplication, QWidget, QScrollArea, QVBoxLayout, QGroupBox, QLabel, QPushButton, QFormLayout
+from PyQt5.QtWidgets import QFormLayout, QVBoxLayout, QGroupBox, QFormLayout
 
 
 class DataVisualizer:
@@ -25,9 +24,7 @@ class DataVisualizer:
         select_button.clicked.connect(self.open_helper_window)
 
         # Import Button
-        self.populate_dropdown()
-        # popular graphs
-        self.populate_graph_test(10)
+        self.populate_dropdowns()
 
         sys.exit(app.exec_())
 
@@ -37,22 +34,27 @@ class DataVisualizer:
         self.ui = UI_SecondWindow()
         self.ui.setupUi(self.window)
         self.window.show()
-
+        
+    def populate_dropdowns(self):
+        # Populate index box:
+        self.UI.index_dropdown.addItem("Summary.csv")
+        self.UI.index_dropdown.addItem("Metadata.csv")
+  
+        # Populate Subject box:
+        self.UI.subject_dropdown.addItem("310")
+        self.UI.subject_dropdown.addItem("311")
+        self.UI.subject_dropdown.addItem("312")
+        
+        # Populate device dropdown
+        self.UI.device_dropdown.addItem("Android")
+        self.UI.device_dropdown.addItem("iOS")
+        
     def print_message(self):
         print("The start date is: ", self.UI.start_date.text())
         print("The end date is: ", self.UI.end_date.text())
         print("The index is: ", self.UI.index_dropdown.currentText())
         print("The subject is: ", self.UI.subject_dropdown.currentText())
         print("Checkbox is set to: ", self.UI.time_converter_check_box.isChecked())
-
-    def populate_dropdown(self):
-        # Populate index box:
-        self.UI.index_dropdown.addItem("Summary.csv")
-        self.UI.index_dropdown.addItem("Metadata.csv")
-
-        # Populate device dropdown
-        self.UI.subject_dropdown.addItem("Apple Watch")
-        self.UI.subject_dropdown.addItem("Fitbit")
 
     def populate_graph_test(self, count: int):
         '''
