@@ -114,6 +114,13 @@ class UI_SecondWindow(object):
         self.remove_arrow.setFont(font)
         self.submit_button.setFont(font)
 
+    def get_filters(self) -> list[str]:
+        # Get the filters from the right list
+        filters = []
+        for i in range(self.right_list.count()):
+            filters.append(self.right_list.item(i).text())
+        return filters
+    
     def add_item_to_right_list(self):
         # Get the clicked item
         left_item = self.left_list.currentItem()
