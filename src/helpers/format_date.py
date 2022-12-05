@@ -26,13 +26,19 @@ def format_utc_to_standard(datetimeUTC: str):
     return standard_time
 
 
-def get_path_date_range(start_date: str, end_date: str):
+def get_path_date_range(start_date: str, end_date: str) -> list[str]:
     """
     This assumes the start and end dates are in the format of 01/17/2020 11:48:00 PM
     """
     # Ignore the time for now
     start_date = start_date.split(" ")[0]
     end_date = end_date.split(" ")[0]
+    
+    # If the date is missing a leading 0, add it to the month less than 10 (i.e: 1/17/2020)
+    if len(start_date.split("/")[0]) == 1:
+        start_date = "0" + start_date
+    if len(end_date.split("/")[0]) == 1:
+        end_date = "0" + end_date
 
     # Get the path of the data folder (helpers\src\../data == ../../data)
     data_path = os.path.join(os.path.dirname(__file__), "../../data")
