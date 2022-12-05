@@ -15,4 +15,5 @@ class InputModel():
     subject_id: str = field(default="310")
     device_OS: str = field(default="Android")
     is_standard_time: bool = field(default=False)
-    date_range: list[str] = field(default_factory=list)
+    start_date: str = field(default="2020-01-18")
+    end_date: str = field(default="2020-01-21")
