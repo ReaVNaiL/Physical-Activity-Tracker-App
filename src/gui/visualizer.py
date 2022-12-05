@@ -20,8 +20,8 @@ class DataVisualizer:
         self._UI.setupUi(MainWindow)
         MainWindow.show()
 
-        with open("src/gui/style/stylesheet.css", "r") as f:
-            app.setStyleSheet(f.read())
+        # with open("src/gui/style/stylesheet.css", "r") as f:
+        #     app.setStyleSheet(f.read())
 
         # This Adds The Second Window
         select_button = self._UI.select_button
@@ -35,18 +35,20 @@ class DataVisualizer:
     def open_helper_window(self):
         self.window = QtWidgets.QMainWindow()
         self.helper_UI = UI_SecondWindow()
-        self.helper_UI.setupUi(self.window)
+        self.helper_UI.setupUI(self.window)
         self.window.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.WindowCloseButtonHint)
         self.window.setMaximumSize(821, 374)
         self.window.setMinimumSize(821, 374)
         self.window.show()
 
-        
         # Create the Input Model
         self.create_input_model()
 
         # Populate the helper window
         self.populate_helper_window()
+        
+        # Add the event listener for the import button
+        self.helper_UI.submit_button.clicked.connect(self.submit_data)
 
     def populate_dropdowns(self):
         # Populate index box:
@@ -73,11 +75,11 @@ class DataVisualizer:
         # Populate the list widget
         for header in header_list:
             item = QListWidgetItem(header)
-            self.helper_UI.second_window_header_list.addItem(item)
+            self.helper_UI.left_list.addItem(item)
 
         # Add Event Listeners for the arrows
-        self.helper_UI.middle_right_arrow.clicked.connect(self.helper_UI.add_item_to_right_list)
-        self.helper_UI.middle_left_arrow.clicked.connect(self.helper_UI.add_item_to_left_list)
+        self.helper_UI.add_arrow.clicked.connect(self.helper_UI.add_item_to_right_list)
+        self.helper_UI.remove_arrow.clicked.connect(self.helper_UI.add_item_to_left_list)
 
     def create_input_model(self):
         self._handler.file_index = self._UI.index_dropdown.currentText()
@@ -87,6 +89,12 @@ class DataVisualizer:
         self._handler.start_date = self._UI.start_date.text()
         self._handler.end_date = self._UI.end_date.text()
 
+    def submit_data(self):
+        # Take the data from the helper window and add it to the input model
+        """
+        TBD
+        """
+        
     # TEST METHODS
     def populate_graph_test(self, count: int):
         """
