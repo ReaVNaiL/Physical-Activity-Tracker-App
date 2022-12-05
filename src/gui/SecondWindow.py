@@ -104,7 +104,7 @@ class UI_SecondWindow(object):
         self.remove_arrow.setText(_translate("secondWindow", "<"))
         self.submit_button.setText(_translate("secondWindow", "Submit"))
         self.display_label.setText(_translate("secondWindow", "Display"))
-
+    
     def setFonts(self, font):
         self.left_list.setFont(font)
         self.right_list.setFont(font)

@@ -12,9 +12,45 @@ from gui.models.InputModel import InputModel
 
 
 class DataHandler(InputModel):
+    graph_filter: list[str]
+
     def __init__(self, input_model: InputModel = None):
         if input_model is None:
             return
+
+    def process_data_filtering(self):
+        """
+        Given the input model, return a dataframe of the filtered data.
+        1- Get the path date range
+        2- Get the path list of the files using the file_index (summary or metadata) and subject_id (if applicable)
+        3- Load the csv files into a dataframe
+        """
+        #
+        print(self.start_date)
+        print(self.end_date)
+        print(self.graph_filter)
+
+        date_range = fd.get_path_date_range(self.start_date, self.end_date)
+        
+        # If the date range is empty return None
+        if len(date_range) == 0:
+            return None
+        
+        path_list = data_handler.get_path_list(date_range, self.file_index, self.subject_id)
+        
+        for path in path_list:
+            print(path)
+            
+        # Load the csv files into a dataframe
+        df = pd.concat([pd.read_csv(path) for path in path_list], ignore_index=True)
+        
+        # Add the date columns copied from df["Datetime (UTC)"] after the Datetime (UTC) column
+        df.insert(1, "Datetime (Standard)", df["Datetime (UTC)"].str.split(" ", expand=True)[0])
+        
+        # Now filtering the dataframe based on the graph_filter
+        for filter in self.graph_filter:
+            df = df[df["Activity"] == filter]
+        
 
     def load_csv(self, path):
         df = pd.read_csv(path)
@@ -24,7 +60,7 @@ class DataHandler(InputModel):
         if name == "summary":
             return self.parse_data_summary(csv)
         # elif name == "metadata": # TBD
-        # return self.parse_metadata_into_list(csv)
+        #     return self.parse_metadata_into_list(csv)
 
     def parse_data_summary(self, csv_data: pd.DataFrame):
         # Create a list of BaseSummaryModel objects
@@ -59,7 +95,7 @@ class DataHandler(InputModel):
 
         return data_summary
 
-    def get_path_list(self, date_range: list[str], file_index: str):
+    def get_path_list(self, date_range: list[str], file_index: str, subject_id: str):
         """
         Given a list of dates, return a list of paths to the file_index.csv files
         i.e: file_index = "summary" or "metadata"
@@ -72,15 +108,18 @@ class DataHandler(InputModel):
         for date in date_range:
             # Get the path of the data folder
             data_path = os.path.join(os.path.dirname(__file__), "..\data")
-
+            
             # Get the list of devices in the data folder
             device_folders = os.listdir(os.path.join(data_path, date))
-
+            
             # For each device folder, get the path to the file_index.csv file
             for device in device_folders:
-                path_list.append(
-                    os.path.join(data_path, date, device, f"{file_index}.csv")
-                )
+                # If the device is not in the filter, skip it
+                if subject_id == "All Subjects":
+                    pass
+                elif device != subject_id:
+                    continue
+                path_list.append(os.path.join(data_path, date, device, f"{file_index}"))
 
         return path_list
 
@@ -100,36 +139,45 @@ class DataHandler(InputModel):
         """
         Given a file index, return the headers of the csv file
         """
-        if index == "summary.csv":
-            return BaseSummaryModel().get_attr_names()
-        elif index == "metadata.csv":
-            return MetadataModel().get_attr_names()
-
+        name_path = os.path.join(os.path.dirname(__file__), "..\\data\\20200118\\310\\")
+        columns = pd.read_csv(f"{name_path}{index}", nrows=0).columns
+        # Dont include the first column
+        return [str(column) for column in columns][1:]
+    
 
 # Testing only
 if __name__ == "__main__":
     os.system("cls")
-    
-    # Testing Get Headers Method
-    data_handler = DataHandler()
 
+    """
+    Testing Get Headers Method
+    """
+    data_handler = DataHandler()
     data_handler.get_headers("Summary.csv")
+
+
+    """
+    Testing the process_filtering function
+    """
+    start_date = "01/18/2020 12:00 AM"
+    end_date = "01/21/2020 12:00 AM"
+    filtering = ['Datetime', 'Movement intensity', 'Rest']
+    
+    # Add the variables to the DataHandler object
+    data_handler.start_date = start_date
+    data_handler.end_date = end_date
+    data_handler.graph_filter = filtering
+    data_handler.file_index = "summary.csv"
+    data_handler.device_OS = "All Devices"
+    data_handler.subject_id = "310"
+
+    # Process the data
+    data_handler.process_data_filtering()
+    
     
     # # DONE: Given a date range, parse all CSV files into a list of BaseSummaryModel objects
-
     # # file type:
     # file_index = "summary"
-
-    # """
-    # Testing the get_path_list function
-    # """
-    # start_date = "2020-01-18T23:48:00Z"
-    # start_date = fd.format_utc_to_standard(start_date)
-
-    # end_date = "2020-01-20T23:48:00Z"
-    # end_date = fd.format_utc_to_standard(end_date)
-
-    # date_range = fd.get_date_range(start_date, end_date)
 
     # # Create the DataHandler object
     # data_handler = DataHandler()
