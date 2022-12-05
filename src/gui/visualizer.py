@@ -5,13 +5,7 @@ from gui.MainWindow import UI_MainWindow
 from gui.SecondWindow import UI_SecondWindow
 from DataHandler import DataHandler
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (
-    QFormLayout,
-    QVBoxLayout,
-    QGroupBox,
-    QFormLayout,
-    QListWidgetItem,
-)
+from PyQt5.QtWidgets import QFormLayout, QVBoxLayout, QGroupBox, QFormLayout, QListWidgetItem
 from gui.models.InputModel import InputModel
 
 
@@ -26,8 +20,8 @@ class DataVisualizer:
         self._UI.setupUi(MainWindow)
         MainWindow.show()
 
-        # with open("src/gui/style/stylesheet.css", "r") as f:
-        #     app.setStyleSheet(f.read())
+        with open("src/gui/style/stylesheet.css", "r") as f:
+            app.setStyleSheet(f.read())
 
         # This Adds The Second Window
         select_button = self._UI.select_button
