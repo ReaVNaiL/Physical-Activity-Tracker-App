@@ -33,13 +33,13 @@ class DataVisualizer:
         sys.exit(app.exec_())
 
     def open_helper_window(self):
-        self.window = QtWidgets.QMainWindow()
+        self.helper_window = QtWidgets.QMainWindow()
         self.helper_UI = UI_SecondWindow()
-        self.helper_UI.setupUI(self.window)
-        self.window.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.WindowCloseButtonHint)
-        self.window.setMaximumSize(821, 374)
-        self.window.setMinimumSize(821, 374)
-        self.window.show()
+        self.helper_UI.setupUI(self.helper_window)
+        self.helper_window.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.WindowCloseButtonHint)
+        self.helper_window.setMaximumSize(821, 374)
+        self.helper_window.setMinimumSize(821, 374)
+        self.helper_window.show()
 
         # Create the Input Model
         self.create_input_model()
@@ -56,11 +56,13 @@ class DataVisualizer:
         self._UI.index_dropdown.addItem("metadata.csv")
 
         # Populate Subject box:
+        self._UI.subject_dropdown.addItem("All Subjects")
         self._UI.subject_dropdown.addItem("310")
         self._UI.subject_dropdown.addItem("311")
         self._UI.subject_dropdown.addItem("312")
 
         # Populate device dropdown
+        self._UI.device_dropdown.addItem("All Devices")
         self._UI.device_dropdown.addItem("Android")
         self._UI.device_dropdown.addItem("iOS")
 
@@ -90,10 +92,19 @@ class DataVisualizer:
         self._handler.end_date = self._UI.end_date.text()
 
     def submit_data(self):
-        # Take the data from the helper window and add it to the input model
         """
         TBD
         """
+        # Close the Helper Window
+        self.helper_window.close()
+        
+        # Get the filtering into the DataHandler
+        filters = self.helper_UI.get_filters()
+        self._handler.graph_filter = filters
+        
+        # Get the data from the handler
+        self._handler.process_data_filtering()
+        
         
     # TEST METHODS
     def populate_graph_test(self, count: int):
