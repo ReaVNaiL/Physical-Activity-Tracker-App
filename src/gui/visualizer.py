@@ -45,8 +45,8 @@ class DataVisualizer:
 
     def populate_dropdowns(self):
         # Populate index box:
-        self._UI.index_dropdown.addItem("Summary.csv")
-        self._UI.index_dropdown.addItem("Metadata.csv")
+        self._UI.index_dropdown.addItem("summary.csv")
+        self._UI.index_dropdown.addItem("metadata.csv")
 
         # Populate Subject box:
         self._UI.subject_dropdown.addItem("310")

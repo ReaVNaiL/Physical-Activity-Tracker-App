@@ -18,9 +18,9 @@ from dataclasses import dataclass
 class MetadataModel:
     """DeviceDataModel For DeviceData.csv Data"""
 
-    timezone: int
-    UTC_date: str
-    firmware_version: str
+    timezone: int = 0
+    UTC_date: str = ""
+    firmware_version: str = ""
     app_name: str = "Mate"
     app_version: str = ""
     mobile_os: str = ""

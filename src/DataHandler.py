@@ -100,9 +100,9 @@ class DataHandler(InputModel):
         """
         Given a file index, return the headers of the csv file
         """
-        if index == "Summary.csv":
+        if index == "summary.csv":
             return BaseSummaryModel().get_attr_names()
-        elif index == "Metadata.csv":
+        elif index == "metadata.csv":
             return MetadataModel().get_attr_names()
 
 
