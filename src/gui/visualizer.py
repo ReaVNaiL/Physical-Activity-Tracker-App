@@ -1,26 +1,28 @@
 import sys
+import pyqtgraph as pg
 from PyQt5 import QtWidgets
 from gui.MainWindow import UI_MainWindow
 from gui.SecondWindow import UI_SecondWindow
-import pyqtgraph as pg
+from DataHandler import DataHandler
 from PyQt5.QtWidgets import QFormLayout, QVBoxLayout, QGroupBox, QFormLayout
-
+from gui.models.InputModel import InputModel
 
 class DataVisualizer:
-    def __init__(self) -> None:
-        self.UI = UI_MainWindow()
+    def __init__(self, handler: DataHandler) -> None:
+        self._UI = UI_MainWindow()
+        self._handler = handler
 
     def show(self):
         app = QtWidgets.QApplication(sys.argv)
         MainWindow = QtWidgets.QMainWindow()
-        self.UI.setupUi(MainWindow)
+        self._UI.setupUi(MainWindow)
         MainWindow.show()
 
         # with open("src/gui/style/stylesheet.css", "r") as f:
         #     app.setStyleSheet(f.read())
 
         # This Adds The Second Window
-        select_button = self.UI.select_button
+        select_button = self._UI.select_button
         select_button.clicked.connect(self.open_helper_window)
 
         # Import Button
@@ -29,38 +31,54 @@ class DataVisualizer:
         sys.exit(app.exec_())
 
     def open_helper_window(self):
-        self.print_message()
-        self.window = QtWidgets.QMainWindow()
-        self.ui = UI_SecondWindow()
-        self.ui.setupUi(self.window)
-        self.window.show()
+        # Create the Input Model
+        self.create_input_model()
         
+        self.window = QtWidgets.QMainWindow()
+        self.helper_UI = UI_SecondWindow()
+        self.helper_UI.setupUi(self.window)
+        self.window.show()
+
     def populate_dropdowns(self):
         # Populate index box:
-        self.UI.index_dropdown.addItem("Summary.csv")
-        self.UI.index_dropdown.addItem("Metadata.csv")
-  
-        # Populate Subject box:
-        self.UI.subject_dropdown.addItem("310")
-        self.UI.subject_dropdown.addItem("311")
-        self.UI.subject_dropdown.addItem("312")
-        
-        # Populate device dropdown
-        self.UI.device_dropdown.addItem("Android")
-        self.UI.device_dropdown.addItem("iOS")
-        
-    def print_message(self):
-        print("The start date is: ", self.UI.start_date.text())
-        print("The end date is: ", self.UI.end_date.text())
-        print("The index is: ", self.UI.index_dropdown.currentText())
-        print("The subject is: ", self.UI.subject_dropdown.currentText())
-        print("Checkbox is set to: ", self.UI.time_converter_check_box.isChecked())
+        self._UI.index_dropdown.addItem("Summary.csv")
+        self._UI.index_dropdown.addItem("Metadata.csv")
 
+        # Populate Subject box:
+        self._UI.subject_dropdown.addItem("310")
+        self._UI.subject_dropdown.addItem("311")
+        self._UI.subject_dropdown.addItem("312")
+
+        # Populate device dropdown
+        self._UI.device_dropdown.addItem("Android")
+        self._UI.device_dropdown.addItem("iOS")
+
+    def populate_helper_window(self):
+        index = self._UI.index_dropdown.currentText()
+        
+        self._handler.get_headers(index)
+
+    def create_input_model(self):
+        print("The start date is: ", self._UI.start_date.text())
+        print("The end date is: ", self._UI.end_date.text())
+        print("The index is: ", self._UI.index_dropdown.currentText())
+        print("The subject is: ", self._UI.subject_dropdown.currentText())
+        print("The device is: ", self._UI.device_dropdown.currentText())
+        print("Checkbox is set to: ", self._UI.time_converter_check_box.isChecked())
+        
+        self._handler.file_index = self._UI.index_dropdown.currentText()
+        self._handler.subject_id = self._UI.subject_dropdown.currentText()
+        self._handler.device_OS = self._UI.device_dropdown.currentText()
+        self._handler.is_standard_time = self._UI.time_converter_check_box.isChecked()
+        self._handler.start_date = self._UI.start_date.text()
+        self._handler.end_date = self._UI.end_date.text()
+    
+    # TEST METHODS
     def populate_graph_test(self, count: int):
-        '''
+        """
         goal: generate graph location equal to the row count
 
-        '''
+        """
         formLayout = QFormLayout()
         groupBox = QGroupBox()
         plotWidget_list = []
@@ -70,13 +88,13 @@ class DataVisualizer:
 
             plot = pg.PlotWidget()
             plot.setMinimumSize(225, 225)
-            plot.plot(y, y2, pen='r')
+            plot.plot(y, y2, pen="r")
             plotWidget_list.append(plot)
             formLayout.addRow(plotWidget_list[i])
 
         groupBox.setLayout(formLayout)
 
-        scroll_area = self.UI.graph_area
+        scroll_area = self._UI.graph_area
         scroll_area.setWidget(groupBox)
         scroll_area.setWidgetResizable(True)
         layout = QVBoxLayout()
@@ -84,5 +102,5 @@ class DataVisualizer:
 
 
 if __name__ == "__main__":
-    ui = DataVisualizer()
-    ui.show()
+    helper_UI = DataVisualizer()
+    helper_UI.show()
