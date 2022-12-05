@@ -4,8 +4,16 @@ from PyQt5 import QtWidgets
 from gui.MainWindow import UI_MainWindow
 from gui.SecondWindow import UI_SecondWindow
 from DataHandler import DataHandler
-from PyQt5.QtWidgets import QFormLayout, QVBoxLayout, QGroupBox, QFormLayout, QListWidget, QListWidgetItem
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import (
+    QFormLayout,
+    QVBoxLayout,
+    QGroupBox,
+    QFormLayout,
+    QListWidgetItem,
+)
 from gui.models.InputModel import InputModel
+
 
 class DataVisualizer:
     def __init__(self, handler: DataHandler) -> None:
@@ -34,14 +42,17 @@ class DataVisualizer:
         self.window = QtWidgets.QMainWindow()
         self.helper_UI = UI_SecondWindow()
         self.helper_UI.setupUi(self.window)
+        self.window.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.WindowCloseButtonHint)
+        self.window.setMaximumSize(821, 374)
+        self.window.setMinimumSize(821, 374)
         self.window.show()
+
         
         # Create the Input Model
         self.create_input_model()
 
         # Populate the helper window
         self.populate_helper_window()
-        
 
     def populate_dropdowns(self):
         # Populate index box:
@@ -62,30 +73,26 @@ class DataVisualizer:
         Populates the helper window with the data from the `InputModel` into the input fields
         """
         index = self._UI.index_dropdown.currentText()
-        
+
         header_list = self._handler.get_headers(index)
-        
+
+        # Populate the list widget
         for header in header_list:
             item = QListWidgetItem(header)
             self.helper_UI.second_window_header_list.addItem(item)
-          
-        
+
+        # Add Event Listeners for the arrows
+        self.helper_UI.middle_right_arrow.clicked.connect(self.helper_UI.add_item_to_right_list)
+        self.helper_UI.middle_left_arrow.clicked.connect(self.helper_UI.add_item_to_left_list)
 
     def create_input_model(self):
-        print("The start date is: ", self._UI.start_date.text())
-        print("The end date is: ", self._UI.end_date.text())
-        print("The index is: ", self._UI.index_dropdown.currentText())
-        print("The subject is: ", self._UI.subject_dropdown.currentText())
-        print("The device is: ", self._UI.device_dropdown.currentText())
-        print("Checkbox is set to: ", self._UI.time_converter_check_box.isChecked())
-        
         self._handler.file_index = self._UI.index_dropdown.currentText()
         self._handler.subject_id = self._UI.subject_dropdown.currentText()
         self._handler.device_OS = self._UI.device_dropdown.currentText()
         self._handler.is_standard_time = self._UI.time_converter_check_box.isChecked()
         self._handler.start_date = self._UI.start_date.text()
         self._handler.end_date = self._UI.end_date.text()
-    
+
     # TEST METHODS
     def populate_graph_test(self, count: int):
         """
