@@ -122,6 +122,21 @@ class DataHandler(InputModel):
 
         return data_summary
 
+    def join_dataframe_standard_dates(self, csv_data: pd.DataFrame):
+        """
+        Given a dataframe, filter the date and time columns into `Datetime (Standard)` and `(UTC)`
+        """
+        # Create a new column for the date after the Datetime (UTC) column
+        csv_data.insert(1, "Datetime (Standard)", data_handler.get_date_from_path(path))
+
+        # Add the dates from the Datetime (UTC) column to the new column
+        csv_data["Datetime (Standard)"] = csv_data["Datetime (UTC)"].apply(fd.format_utc_to_standard)
+
+        # Remove the data that is not in the date range
+        csv_data = csv_data[(csv_data["Datetime (Standard)"] >= start_date) & (csv_data["Datetime (Standard)"] <= end_date)]
+
+        return csv_data
+
     def get_path_list(self, date_range: list[str], file_index: str, subject_id: str):
         """
         Given a list of dates, return a list of paths to the file_index.csv files
@@ -210,7 +225,7 @@ if __name__ == "__main__":
     """
     Get the list of paths to the csv files with parsed data
     """
-    start_date = "2020-01-18T23:48:00Z"
+    start_date = "2020-01-20T23:48:00Z"
     start_date = fd.format_utc_to_standard(start_date)
 
     end_date = "2020-01-20T23:48:00Z"
@@ -252,7 +267,12 @@ if __name__ == "__main__":
         Data Frame Logic Testing
         """
         csv_data = data_handler.load_csv(path)
+        csv_data = data_handler.join_dataframe_standard_dates(csv_data)
+ 
+              
         df_list.append(csv_data)
+
+
 
         # '''
         # Building the dictionary:
@@ -268,7 +288,7 @@ if __name__ == "__main__":
     print("\nData Frame List: ")
     for df in df_list:
         # Print date and device for only the first 5 rows
-        print(df.head(5))
+        print(df.head(10))
         print("\n")
 
     # print("\nNew Summary List: ")
