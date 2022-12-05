@@ -17,6 +17,13 @@ class DataHandler(InputModel):
     def __init__(self, input_model: InputModel = None):
         if input_model is None:
             return
+        super().file_index = input_model.file_index
+        super().subject_id = input_model.subject_id
+        super().device_OS = input_model.device_OS
+        super().is_standard_time = input_model.is_standard_time
+        super().start_date = input_model.start_date
+        super().end_date = input_model.end_date
+
 
     def process_data_filtering(self):
         """
@@ -173,7 +180,7 @@ if __name__ == "__main__":
     Testing Get Headers Method
     """
     data_handler = DataHandler()
-    data_handler.get_headers("Summary.csv")
+    print(data_handler.get_headers("summary.csv"))
 
 
     """
@@ -194,51 +201,77 @@ if __name__ == "__main__":
     # Process the data
     print(data_handler.process_data_filtering())
     
+
     
     # # DONE: Given a date range, parse all CSV files into a list of BaseSummaryModel objects
-    # # file type:
-    # file_index = "summary"
+    # file type:
+    file_index = "summary.csv"
 
-    # # Create the DataHandler object
-    # data_handler = DataHandler()
+    """
+    Get the list of paths to the csv files with parsed data
+    """
+    start_date = "2020-01-18T23:48:00Z"
+    start_date = fd.format_utc_to_standard(start_date)
 
-    # # Assign the variables to the DataHandler object
-    # data_handler.file_index = file_index
-    # data_handler.start_date = start_date
-    # data_handler.end_date = end_date
+    end_date = "2020-01-20T23:48:00Z"
+    end_date = fd.format_utc_to_standard(end_date)
 
-    # # Get the list of paths
-    # path_list = data_handler.get_path_list(date_range, file_index)
+    date_range = fd.get_path_date_range(start_date, end_date)
 
-    # new_summary_list = BaseSummaryFileList()
+    # Create the DataHandler object
+    data_handler = DataHandler()
 
-    # """
-    # Testing the parse_summary_into_list function to BaseSummaryFileList
-    # """
-    # for path in path_list:
-    #     """
-    #     Consists of three steps.
-    #     1- Load the csv file
-    #     2- Parse the csv file into a list of BaseSummaryModel objects
-    #     3- Append the list of BaseSummaryModel objects to the BaseSummaryFileList
-    #     4- Optional: Assign the BaseSummaryFileList to a dictionary with the key being the date + device
-    #     """
-    #     csv_object = data_handler.load_csv(path)
-    #     # summary_file = data_handler.parse_csv(csv_object, index_file)
-    #     # new_summary_list.file_contents.append(summary_file)
+    # Assign the variables to the DataHandler object
+    data_handler.file_index = file_index
+    data_handler.start_date = start_date
+    data_handler.end_date = end_date
 
-    #     # '''
-    #     # Building the dictionary:
-    #     # '''
-    #     # date = data_handler.get_date_from_path(path)
-    #     # device = data_handler.get_device_from_path(path)
-    #     # new_summary_list.file_contents_dict[f"{date}+{device}"] = summary_file
+    # Get the list of paths
+    path_list = data_handler.get_path_list(date_range, file_index, "310")
+    new_summary_list = BaseSummaryFileList()
 
-    # print("\nPath List: ")
-    # for path in path_list:
-    #     print("-", path)
+    # Create a dataframe list
+    df_list = []
 
-    # # print("\nNew Summary List: ")
-    # # for summary in new_summary_list.file_contents:
-    # #     print(summary)
-    # #     print("\n")
+    """
+    Testing the parse_summary_into_list function to BaseSummaryFileList
+    """
+    for path in path_list:
+        """
+        Consists of three steps.
+        1- Load the csv file
+        2- Parse the csv file into a list of BaseSummaryModel objects
+        3- Append the list of BaseSummaryModel objects to the BaseSummaryFileList
+        4- Optional: Assign the BaseSummaryFileList to a dictionary with the key being the date + device
+        """
+        # csv_object = data_handler.load_csv(path)
+        # summary_file = data_handler.parse_csv(csv_object, index_file)
+        # new_summary_list.file_contents.append(summary_file)
+    
+        """
+        Data Frame Logic Testing
+        """
+        csv_data = data_handler.load_csv(path)
+        df_list.append(csv_data)
+
+        # '''
+        # Building the dictionary:
+        # '''
+        # date = data_handler.get_date_from_path(path)
+        # device = data_handler.get_device_from_path(path)
+        # new_summary_list.file_contents_dict[f"{date}+{device}"] = summary_file
+
+    print("\nPath List: ")
+    for path in path_list:
+        print("-", path)
+    
+    print("\nData Frame List: ")
+    for df in df_list:
+        # Print date and device for only the first 5 rows
+        print(df.head(5))
+        print("\n")
+
+    # print("\nNew Summary List: ")
+    # for summary in new_summary_list.file_contents:
+    #     print(summary)
+    #     print("\n")
