@@ -96,17 +96,14 @@ class DataHandler(InputModel):
         """
         return path.split("\\")[-2]
 
-    def get_headers(self, index) -> list[str]:
+    def get_headers(self, index):
         """
         Given a file index, return the headers of the csv file
         """
-        output = []
         if index == "Summary.csv":
-            output = BaseSummaryModel().get_attr_names()
-            print(output)
+            return BaseSummaryModel().get_attr_names()
         elif index == "Metadata.csv":
-            output = MetadataModel().get_attr_names()
-        return output
+            return MetadataModel().get_attr_names()
 
 
 # Testing only

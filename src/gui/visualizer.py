@@ -4,7 +4,7 @@ from PyQt5 import QtWidgets
 from gui.MainWindow import UI_MainWindow
 from gui.SecondWindow import UI_SecondWindow
 from DataHandler import DataHandler
-from PyQt5.QtWidgets import QFormLayout, QVBoxLayout, QGroupBox, QFormLayout
+from PyQt5.QtWidgets import QFormLayout, QVBoxLayout, QGroupBox, QFormLayout, QListWidget, QListWidgetItem
 from gui.models.InputModel import InputModel
 
 class DataVisualizer:
@@ -31,13 +31,17 @@ class DataVisualizer:
         sys.exit(app.exec_())
 
     def open_helper_window(self):
-        # Create the Input Model
-        self.create_input_model()
-        
         self.window = QtWidgets.QMainWindow()
         self.helper_UI = UI_SecondWindow()
         self.helper_UI.setupUi(self.window)
         self.window.show()
+        
+        # Create the Input Model
+        self.create_input_model()
+
+        # Populate the helper window
+        self.populate_helper_window()
+        
 
     def populate_dropdowns(self):
         # Populate index box:
@@ -54,9 +58,18 @@ class DataVisualizer:
         self._UI.device_dropdown.addItem("iOS")
 
     def populate_helper_window(self):
+        """
+        Populates the helper window with the data from the `InputModel` into the input fields
+        """
         index = self._UI.index_dropdown.currentText()
         
-        self._handler.get_headers(index)
+        header_list = self._handler.get_headers(index)
+        
+        for header in header_list:
+            item = QListWidgetItem(header)
+            self.helper_UI.second_window_header_list.addItem(item)
+          
+        
 
     def create_input_model(self):
         print("The start date is: ", self._UI.start_date.text())
