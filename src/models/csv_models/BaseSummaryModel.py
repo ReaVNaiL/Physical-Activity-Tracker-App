@@ -29,3 +29,9 @@ class BaseSummaryModel(object):
 
     def __iter__ (self):
         return iter(self.__dict__.values())
+    
+    def get_attr_names(self):
+        attrs = []
+        for key in self.__dict__.keys():
+            attrs.append(key)  
+        return attrs

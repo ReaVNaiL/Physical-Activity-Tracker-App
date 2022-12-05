@@ -13,9 +13,11 @@
 import datetime
 from dataclasses import dataclass
 
+
 @dataclass(init=True, order=True)
-class DeviceDataModel:
-    """ DeviceDataModel For DeviceData.csv Data """
+class MetadataModel:
+    """DeviceDataModel For DeviceData.csv Data"""
+
     timezone: int
     UTC_date: str
     firmware_version: str
@@ -24,6 +26,12 @@ class DeviceDataModel:
     mobile_os: str = ""
     mobile_os_version: str = ""
     gtcs_algorithm_version: str = ""
-                  
-    def __iter__ (self):
+
+    def __iter__(self):
         return iter(self.__dict__.values())
+
+    def get_attr_names(self):
+        attrs = []
+        for key in self.__dict__.keys():
+            attrs.append(key)  
+        return attrs
