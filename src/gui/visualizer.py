@@ -9,7 +9,8 @@ from PyQt5.QtWidgets import QFormLayout, QVBoxLayout, QGroupBox, QFormLayout, QL
 import sys
 import pyqtgraph as pg
 import pandas as pd
-
+import matplotlib as plt
+import numpy as np
 
 class DataVisualizer:
     def __init__(self, handler: DataHandler) -> None:
@@ -124,16 +125,31 @@ class DataVisualizer:
         formLayout = QFormLayout()
         groupBox = QGroupBox()
         plotWidget_list = []
-        for i in range(count):
-            y = [1, 2, 3]
-            y2 = [2, 3, 4]
+        
+        # for i in range(count):
+        #     x = 
+        #     y2 = [2, 3, 4]
 
+        #     plot = pg.PlotWidget()
+        #     plot.setMinimumSize(225, 225)
+        #     plot.plot(y, y2, pen="r")
+        #     plotWidget_list.append(plot)
+        #     formLayout.addRow(plotWidget_list[i])
+
+        date_column = records_df.columns[0]
+        x_axis = records_df[date_column].to_list()
+        
+        count = 0
+        for record in records_df.columns[1:]:
+            y_axis = records_df[record].to_list()
             plot = pg.PlotWidget()
             plot.setMinimumSize(225, 225)
-            plot.plot(y, y2, pen="r")
+            c = pg.PlotDataItem(x_axis, y_axis)
+            plot.addItem(c)
             plotWidget_list.append(plot)
-            formLayout.addRow(plotWidget_list[i])
-
+            formLayout.addRow(plotWidget_list[count])
+            count += 1
+            
         groupBox.setLayout(formLayout)
 
         scroll_area = self._UI.graph_area
