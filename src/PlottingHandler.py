@@ -10,7 +10,10 @@ class PlottingHandler:
         
         # for each attribute of data_handler print the value
         self._data_handler.__repr__()
+        
+        self.data = self._data_handler.process_data_filtering(filter_enabled=False)
 
+        print(self.data)
 
 if __name__ == "__main__":
     plotting_handler = PlottingHandler()

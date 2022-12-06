@@ -34,7 +34,7 @@ class DataHandler(InputModel):
               f"- End Date: {self.end_date}\n" +
               f"- Graph Filter: {self.graph_filter}\n")
 
-    def process_data_filtering(self):
+    def process_data_filtering(self, filter_enabled: bool):
         """
         Given the input model, return a dataframe of the filtered data.
         1- Get the path date range
@@ -43,15 +43,7 @@ class DataHandler(InputModel):
         4- Filter the dataframe based on the input model
         5- Return the filtered dataframe
         """
-        #
-        print("Start Date: ", self.start_date)
-        print("End Date: ", self.end_date)
-        print("File Index: ", self.file_index)
-        print("Subject ID: ", self.subject_id)
-        print("Device OS: ", self.device_OS)
-        print("Is Standard Time: ", self.is_standard_time)
-        print("Graph Filter: ", self.graph_filter, "\n")
-
+        # Get the path date range
         date_range = fd.get_path_date_range(self.start_date, self.end_date)
         
         # If the date range is empty return None
@@ -73,14 +65,15 @@ class DataHandler(InputModel):
          # Remove the data that is not in the date range
         record_df = self.filter_dates(record_df, self.start_date, self.end_date)
 
-        # Now filtering the dataframe based on the graph_filter
-        for column in record_df.columns:
-            # If the column is datetime, skip it
-            if column == "Datetime (UTC)" or column == "Datetime (Standard)": 
-                continue
-            
-            if column not in self.graph_filter:
-                record_df = record_df.drop(column, axis=1)
+        if filter_enabled:
+            # Now filtering the dataframe based on the graph_filter
+            for column in record_df.columns:
+                # If the column is datetime, skip it
+                if column == "Datetime (UTC)" or column == "Datetime (Standard)": 
+                    continue
+                
+                if column not in self.graph_filter:
+                    record_df = record_df.drop(column, axis=1)
         
         record_df = self.extract_datetime_format(record_df)
 
@@ -245,7 +238,7 @@ if __name__ == "__main__":
     data_handler.is_standard_time = True
 
     # Process the data
-    print(data_handler.process_data_filtering())
+    print(data_handler.process_data_filtering(True))
     
 
     
