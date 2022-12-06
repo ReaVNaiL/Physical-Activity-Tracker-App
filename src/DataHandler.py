@@ -24,6 +24,15 @@ class DataHandler(InputModel):
         super().start_date = input_model.start_date
         super().end_date = input_model.end_date
 
+    def __repr__(self) -> str:
+        print(f"\nDataHandler:\n" +
+              f"- File: {self.file_index}\n" +
+              f"- Subject ID: {self.subject_id}\n" +
+              f"- Device OS: {self.device_OS}\n" +
+              f"- Is Standard Time: {self.is_standard_time}\n" +
+              f"- Start Date: {self.start_date}\n" +
+              f"- End Date: {self.end_date}\n" +
+              f"- Graph Filter: {self.graph_filter}\n")
 
     def process_data_filtering(self):
         """
@@ -191,7 +200,21 @@ class DataHandler(InputModel):
         # Dont include the first column
         return [str(column) for column in columns][1:]
     
- 
+    # TEST METHOD
+    def TEST_DATA_HANDLER(self):
+        start_date = "01/20/2020 12:00 AM"
+        end_date = "01/21/2020 12:00 AM"
+        filtering = ['Movement intensity', 'Rest']
+        
+        # Add the variables to the DataHandler object
+        self.start_date = start_date
+        self.end_date = end_date
+        self.graph_filter = filtering
+        self.file_index = "summary.csv"
+        self.device_OS = "All Devices"
+        self.subject_id = "310"
+        self.is_standard_time = True
+
 # Testing only
 if __name__ == "__main__":
     # os.system("cls")
