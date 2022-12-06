@@ -1,4 +1,6 @@
+import helpers.format_date as ft
 from DataHandler import DataHandler
+
 
 class PlottingHandler:
     def __init__(self):
@@ -13,8 +15,12 @@ class PlottingHandler:
         
         self.data = self._data_handler.process_data_filtering(filter_enabled=False)
 
-        print(self.data)
-
+        x_axis = self.data["Unix Timestamp (UTC)"]
+        y_axis = self.data["Eda avg"]
+        
+        new_time = ft.convert_timestamp_standard(x_axis.to_list()[2])
+        print(new_time)
+        
 if __name__ == "__main__":
     plotting_handler = PlottingHandler()
     plotting_handler.TEST_PLOTTING_HANDLER()

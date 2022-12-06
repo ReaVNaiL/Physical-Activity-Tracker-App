@@ -13,7 +13,7 @@ def format_standard_to_utc(datetimeStandard: str):
     Converts From: 01/17/2020 11:48:00 PM
     To: 2020-01-17T23:48:00Z
     """
-    utc_time = date.strptime(datetimeStandard, "%m/%d/%Y %I:%M %p").strftime("%Y-%m-%dT%H:%M:%SZ")
+    utc_time = date.strptime(datetimeStandard, "%M/%D/%Y %I:%M %p").strftime("%Y-%m-%dT%H:%M:%SZ")
     return utc_time
 
 
@@ -26,6 +26,14 @@ def format_utc_to_standard(datetimeUTC: str):
     return standard_time
 
 
+def convert_timestamp_standard(timestamp: int):
+    """
+    Converts From: `1579298080`
+    To: `01/17/2020 11:48 PM`
+    """
+    return date.utcfromtimestamp(int(timestamp / 1000)).strftime("%m/%d/%Y %I:%M %p")
+
+
 def get_path_date_range(start_date: str, end_date: str) -> list[str]:
     """
     This assumes the start and end dates are in the format of 01/17/2020 11:48:00 PM
@@ -33,7 +41,7 @@ def get_path_date_range(start_date: str, end_date: str) -> list[str]:
     # Ignore the time for now
     start_date = start_date.split(" ")[0]
     end_date = end_date.split(" ")[0]
-    
+
     # If the date is missing a leading 0, add it to the month less than 10 (i.e: 1/17/2020)
     if len(start_date.split("/")[0]) == 1:
         start_date = "0" + start_date
