@@ -48,10 +48,17 @@ class DataHandler(InputModel):
         df.insert(1, "Datetime (Standard)", df["Datetime (UTC)"].str.split(" ", expand=True)[0])
         
         # Now filtering the dataframe based on the graph_filter
-        for filter in self.graph_filter:
-            df = df[df["Activity"] == filter]
+        for column in df.columns:
+            # If the column is datetime, skip it
+            if column == "Datetime (UTC)" or column == "Datetime (Standard)": 
+                continue
+            
+            if column not in self.graph_filter:
+                df = df.drop(column, axis=1)
         
+        return df
 
+        
     def load_csv(self, path):
         df = pd.read_csv(path)
         return df
@@ -161,7 +168,7 @@ if __name__ == "__main__":
     """
     start_date = "01/18/2020 12:00 AM"
     end_date = "01/21/2020 12:00 AM"
-    filtering = ['Datetime', 'Movement intensity', 'Rest']
+    filtering = ['Movement intensity', 'Rest']
     
     # Add the variables to the DataHandler object
     data_handler.start_date = start_date
