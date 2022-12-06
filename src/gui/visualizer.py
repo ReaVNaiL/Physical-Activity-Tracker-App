@@ -1,12 +1,14 @@
 import sys
 import pyqtgraph as pg
-from PyQt5 import QtWidgets
+import pandas as pd
+
+from DataHandler import DataHandler
 from gui.MainWindow import UI_MainWindow
 from gui.SecondWindow import UI_SecondWindow
-from DataHandler import DataHandler
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QFormLayout, QVBoxLayout, QGroupBox, QFormLayout, QListWidgetItem
 from gui.models.InputModel import InputModel
+from PyQt5.QtCore import Qt
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QFormLayout, QVBoxLayout, QGroupBox, QFormLayout, QListWidgetItem, QMessageBox
 
 
 class DataVisualizer:
@@ -16,9 +18,9 @@ class DataVisualizer:
 
     def show(self):
         app = QtWidgets.QApplication(sys.argv)
-        MainWindow = QtWidgets.QMainWindow()
-        self._UI.setupUi(MainWindow)
-        MainWindow.show()
+        self.MainWindow = QtWidgets.QMainWindow()
+        self._UI.setupUi(self.MainWindow)
+        self.MainWindow.show()
 
         # with open("src/gui/style/stylesheet.css", "r") as f:
         #     app.setStyleSheet(f.read())
@@ -103,11 +105,18 @@ class DataVisualizer:
         self._handler.graph_filter = filters
         
         # Get the data from the handler
-        self._handler.process_data_filtering()
+        filtered_records = self._handler.process_data_filtering()
+        
+        if len(filtered_records) == 0:
+            QMessageBox.about(self.MainWindow, "Alert", "No Records Found!")
+        else:
+            # Populate the graph area
+            #BUG: This is not working
+            self.populate_graph_test(len(filtered_records.columns), filtered_records)
         
         
     # TEST METHODS
-    def populate_graph_test(self, count: int):
+    def populate_graph_test(self, count: int, records_df):
         """
         goal: generate graph location equal to the row count
 
@@ -115,16 +124,15 @@ class DataVisualizer:
         formLayout = QFormLayout()
         groupBox = QGroupBox()
         plotWidget_list = []
-        for i in range(count):
-            y = [1, 2, 3]
-            y2 = [2, 3, 4]
 
-            plot = pg.PlotWidget()
-            plot.setMinimumSize(225, 225)
-            plot.plot(y, y2, pen="r")
-            plotWidget_list.append(plot)
-            formLayout.addRow(plotWidget_list[i])
-
+        for record in records_df:
+            print(records_df[record])
+            
+            plotWidget = pg.PlotWidget()
+            plotWidget.plot(records_df[record])
+            plotWidget_list.append(plotWidget)
+            formLayout.addRow(plotWidget)
+        
         groupBox.setLayout(formLayout)
 
         scroll_area = self._UI.graph_area
@@ -132,7 +140,6 @@ class DataVisualizer:
         scroll_area.setWidgetResizable(True)
         layout = QVBoxLayout()
         layout.addWidget(scroll_area)
-
 
 if __name__ == "__main__":
     helper_UI = DataVisualizer()

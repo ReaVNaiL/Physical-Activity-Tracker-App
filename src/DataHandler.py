@@ -24,6 +24,8 @@ class DataHandler(InputModel):
         1- Get the path date range
         2- Get the path list of the files using the file_index (summary or metadata) and subject_id (if applicable)
         3- Load the csv files into a dataframe
+        4- Filter the dataframe based on the input model
+        5- Return the filtered dataframe
         """
         #
         print(self.start_date)
@@ -34,29 +36,40 @@ class DataHandler(InputModel):
         
         # If the date range is empty return None
         if len(date_range) == 0:
-            return None
+            return pd.DataFrame()
         
-        path_list = data_handler.get_path_list(date_range, self.file_index, self.subject_id)
+        path_list = self.get_path_list(date_range, self.file_index, self.subject_id)
         
+        if len(path_list) == 0:
+            return pd.DataFrame()
+        
+        # CHECK
         for path in path_list:
             print(path)
             
         # Load the csv files into a dataframe
-        df = pd.concat([pd.read_csv(path) for path in path_list], ignore_index=True)
+        record_df = pd.concat([pd.read_csv(path) for path in path_list], ignore_index=True)
         
-        # Add the date columns copied from df["Datetime (UTC)"] after the Datetime (UTC) column
-        df.insert(1, "Datetime (Standard)", df["Datetime (UTC)"].str.split(" ", expand=True)[0])
+        # Add the date columns copied from df["Datetime (UTC)"] with the correct standard time
+        # after the Datetime (UTC) column
+        record_df.insert(1, "Datetime (Standard)", record_df["Datetime (UTC)"].apply(fd.format_utc_to_standard))
         
         # Now filtering the dataframe based on the graph_filter
-        for column in df.columns:
+        for column in record_df.columns:
             # If the column is datetime, skip it
             if column == "Datetime (UTC)" or column == "Datetime (Standard)": 
                 continue
             
             if column not in self.graph_filter:
-                df = df.drop(column, axis=1)
+                record_df = record_df.drop(column, axis=1)
         
-        return df
+        if self.is_standard_time:
+            record_df = record_df.drop('Datetime (UTC)', axis=1)
+        else: 
+            record_df = record_df.drop('Datetime (Standard)', axis=1)
+
+        # Return the filtered dataframe
+        return record_df
 
         
     def load_csv(self, path):
@@ -179,7 +192,7 @@ if __name__ == "__main__":
     data_handler.subject_id = "310"
 
     # Process the data
-    data_handler.process_data_filtering()
+    print(data_handler.process_data_filtering())
     
     
     # # DONE: Given a date range, parse all CSV files into a list of BaseSummaryModel objects
