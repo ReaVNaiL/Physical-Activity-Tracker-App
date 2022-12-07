@@ -213,14 +213,16 @@ class UI_MainWindow(object):
 
         # Start Date
         self.start_date = QtWidgets.QDateTimeEdit(self.time_dates_container)
-        self.start_date.setDateTime(QtCore.QDateTime(
-            QtCore.QDate(2020, 1, 18), QtCore.QTime(0, 0, 0)))
+        self.start_date.setDateTime(QtCore.QDateTime(QtCore.QDate(2020, 1, 18), QtCore.QTime(0, 0, 0)))
         self.start_date.setObjectName("start_date")
+        self.start_date.setDisplayFormat("MM/dd/yyyy hh:mm A")
 
         # End Date
         self.end_date = QtWidgets.QDateTimeEdit(self.time_dates_container)
         self.end_date.setDateTime(QtCore.QDateTime(QtCore.QDate(2020, 1, 21), QtCore.QTime(0, 0, 0)))
         self.end_date.setObjectName("end_date")
+        self.start_date.setDisplayFormat("MM/dd/yyyy hh:mm A")
+
 
         # Time Range
         self.time_converter_check_box = QtWidgets.QCheckBox(self.frame_2)
