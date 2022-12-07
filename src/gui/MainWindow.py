@@ -221,7 +221,7 @@ class UI_MainWindow(object):
         self.end_date = QtWidgets.QDateTimeEdit(self.time_dates_container)
         self.end_date.setDateTime(QtCore.QDateTime(QtCore.QDate(2020, 1, 21), QtCore.QTime(0, 0, 0)))
         self.end_date.setObjectName("end_date")
-        self.start_date.setDisplayFormat("MM/dd/yyyy hh:mm A")
+        self.end_date.setDisplayFormat("MM/dd/yyyy hh:mm A")
 
 
         # Time Range
