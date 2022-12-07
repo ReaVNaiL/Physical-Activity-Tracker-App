@@ -84,6 +84,15 @@ class DataVisualizer:
             item = QListWidgetItem(header)
             self.helper_UI.left_list.addItem(item)
 
+        try:
+            # Populate the right list with the list of items that are selected
+            self.helper_UI.right_list.addItems(self._handler.graph_filter)
+            # Remove the items from the left list
+            for item in self._handler.graph_filter:
+                self.helper_UI.left_list.takeItem(self.helper_UI.left_list.row(self.helper_UI.left_list.findItems(item, Qt.MatchExactly)[0]))
+        except:
+            pass
+        
         # Add Event Listeners for the arrows
         self.helper_UI.add_arrow.clicked.connect(self.helper_UI.add_item_to_right_list)
         self.helper_UI.remove_arrow.clicked.connect(self.helper_UI.add_item_to_left_list)
