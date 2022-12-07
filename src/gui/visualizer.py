@@ -118,7 +118,7 @@ class DataVisualizer:
             self.populate_graph_test(len(filtered_records.columns), filtered_records)
 
     # TEST METHODS
-    def populate_graph_test(self, count: int, records_df):
+    def populate_graph_test(self, count: int, records_df: pd.DataFrame):
         """
         goal: generate graph location equal to the row count
 
@@ -127,8 +127,9 @@ class DataVisualizer:
         groupBox = QGroupBox()
         plotWidget_list = []
 
-        # Get the Unix Timestamp
+        # Get the Unix Timestamp then drop it
         x_axis = records_df['Unix Timestamp (UTC)'].to_list()
+        records_df = records_df.drop(columns=['Unix Timestamp (UTC)'])
         
         # Set the x-axis to seconds since epoch
         start_date = x_axis[0] / 1000
@@ -136,21 +137,26 @@ class DataVisualizer:
         date_range = np.linspace(start_date, end_date, len(x_axis))
         
         count = 0
-        for record in records_df.columns[1:]:
+        for column in records_df.columns:
             # setting y_axis
-            y_axis = records_df[record].to_list()
+            y_axis = records_df[column].to_list()
             
             # Generating plot widget
             plot = pg.PlotWidget()
             plot.setMinimumSize(225, 225)
             
             # Set up the x-axis to display the time and date
-            axis = DateAxisItem(orientation='bottom')
+            axis = DateAxisItem(orientation='bottom', is_standard=self._handler.is_standard_time)
             axis.attachToPlotItem(plot.getPlotItem())
             
             # Plot the data
-            plot.plot(x=date_range, y=y_axis, pen="r")
-
+            plot.plot(x=date_range, y=y_axis, randomPen=(count, count+1))
+            
+            # display grid
+            plot.showGrid(x=True, y=True)
+            plot.setLabel('left', column)
+            plot.setTitle(column)
+            
             plotWidget_list.append(plot)
             formLayout.addRow(plotWidget_list[count])
             count += 1
