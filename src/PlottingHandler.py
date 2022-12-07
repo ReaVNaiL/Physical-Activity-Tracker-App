@@ -20,22 +20,17 @@ class PlottingHandler:
         print("TEST_PLOTTING_HANDLER")
         
         # for each attribute of data_handler print the value
-        self._data_handler.__repr__()
+        print(repr(self._data_handler))
         
         self.data = self._data_handler.process_data_filtering(filter_enabled=False)
-
-        x_axis = self.data["Unix Timestamp (UTC)"]
-        y_axis = self.data["Eda avg"]
-        
-        # new_time = ft.convert_timestamp_standard(x_axis.to_list()[2])
         
 class Window(QWidget):
     def __init__(self, input_val, data_handler: PlottingHandler):
         super().__init__()
         self.top = 200
         self.left = 500
-        self.width = 400
-        self.height = 300
+        self.width = 1400
+        self.height = 1300
         self.setGeometry(self.left, self.top, self.width, self.height)
         
         
@@ -84,7 +79,6 @@ class Window(QWidget):
                 plot.setLabel('left', column)
                 plot.setTitle(column)
                 
-
                 plotWidget_list.append(plot)
                 formLayout.addRow(plotWidget_list[count])
                 count += 1

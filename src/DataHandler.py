@@ -6,8 +6,6 @@ import pandas as pd
 
 # Classes
 from models.csv_models.BaseSummaryModel import BaseSummaryModel
-from models.csv_models.MetadataModel import MetadataModel
-from models.csv_models.BaseSummaryFileList import BaseSummaryFileList
 from gui.models.InputModel import InputModel
 
 
@@ -25,7 +23,7 @@ class DataHandler(InputModel):
         super().end_date = input_model.end_date
 
     def __repr__(self) -> str:
-        print(f"\nDataHandler:\n" +
+        return (f"\nDataHandler:\n" +
               f"- File: {self.file_index}\n" +
               f"- Subject ID: {self.subject_id}\n" +
               f"- Device OS: {self.device_OS}\n" +
@@ -37,14 +35,13 @@ class DataHandler(InputModel):
     def process_data_filtering(self, filter_enabled: bool):
         """
         Given the input model, return a dataframe of the filtered data.
-        1- Get the path date range
-        2- Get the path list of the files using the file_index (summary or metadata) and subject_id (if applicable)
-        3- Load the csv files into a dataframe
-        4- Filter the dataframe based on the input model
-        5- Return the filtered dataframe
+        * Get the path date range
+        * Get the path list of the files using the file_index (summary or metadata) and subject_id (if applicable)
+        * Load the csv files into a dataframe
+        * Filter the dataframe based on the input model
+        * Return the filtered dataframe
         """
-
-        
+      
         # Get the path date range
         date_range = fd.get_path_date_range(self.start_date, self.end_date)
         
@@ -60,28 +57,41 @@ class DataHandler(InputModel):
         # Load the csv files into a dataframe
         record_df = self.import_csv_data_frames(path_list)
 
-        # Add the date columns copied from df["Datetime (UTC)"] with the correct standard time
-        # after the Datetime (UTC) column
+        print(record_df["Unix Timestamp (UTC)"])
+        
+        # Add the standard time column to the dataframe
         self.generate_standard_time_column(record_df)
 
-        # BUG: The filtering is not working properly
         # Remove the data that is not in the date range
         record_df = self.filter_dates(record_df, self.start_date, self.end_date)
 
         if filter_enabled:
-            # Now filtering the dataframe based on the graph_filter
-            for column in record_df.columns:
-                # If the column is datetime, skip it
-                # if column == "Datetime (UTC)" or column == "Datetime (Standard)" or column == "Unix Timestamp (UTC)": 
-                if column == "Unix Timestamp (UTC)":
-                    continue
-                
-                if column not in self.graph_filter:
-                    record_df = record_df.drop(column, axis=1)
+            # Filter the dataframe based on the input model
+            record_df = self.filter_data(record_df, self.graph_filter)
         
         # Return the filtered dataframe
         return record_df
 
+    def filter_data(self, record_df: pd.DataFrame, filters: list[str]):
+        """
+        Given a `dataframe` and a `list` of `filters`, return a `dataframe` with the `filters` applied
+
+        Args:
+            `record_df` (pd.DataFrame): The dataframe to be filtered
+            `filters` (list[str]): The list of filters to be applied
+
+        Returns:
+            `pd.DataFrame`: The filtered dataframe
+        """
+        for column in record_df.columns:
+            # If the column is datetime, skip it
+            if column == "Unix Timestamp (UTC)":
+                continue
+            
+            if column not in filters:
+                record_df = record_df.drop(column, axis=1)
+                
+        return record_df
 
     def generate_standard_time_column(self, csv_data: pd.DataFrame):
         """
@@ -98,39 +108,6 @@ class DataHandler(InputModel):
             The `dataframe` will be a `concatenation` of all the csv files in the `path_list`
         """
         return pd.concat([pd.read_csv(path) for path in path_list], ignore_index=True)
-
-    def parse_data_summary(self, csv_data: pd.DataFrame):
-        # Create a list of BaseSummaryModel objects
-        data_summary = [BaseSummaryModel]
-        data_summary.pop()
-
-        csv_columns = [str(columns) for columns in csv_data.columns]
-
-        # For each row add a BaseSummaryModel object to the list
-        for index, row in csv_data.iterrows():
-            # For each column in the row, create a BaseSummaryModel object
-            summary = BaseSummaryModel()
-
-            # Fill the class
-            class_iter = 0
-            for property in summary.__dict__:
-                summary.__dict__[property] = row[csv_columns[class_iter]]
-                class_iter += 1
-
-            # # Print each item in summary
-            # for item in summary:
-            #     print(item)
-
-            # print(f"Class Properties: {dir(summary)}")
-            # print("\n\n")
-
-            # From UTC to Standard Time
-            summary.UTC_date = fd.format_utc_to_standard(summary.UTC_date)
-
-            # Add the summary object to the list
-            data_summary.append(summary)
-
-        return data_summary
 
     def filter_dates(self, csv_data: pd.DataFrame, start_date: str, end_date: str):
         """
@@ -185,15 +162,49 @@ class DataHandler(InputModel):
         # Dont include the first column
         return [str(column) for column in columns][1:]
     
+    # DEPRECATED METHODS
+    def parse_data_summary(self, csv_data: pd.DataFrame):
+        # Create a list of BaseSummaryModel objects
+        data_summary = [BaseSummaryModel]
+        data_summary.pop()
+
+        csv_columns = [str(columns) for columns in csv_data.columns]
+
+        # For each row add a BaseSummaryModel object to the list
+        for index, row in csv_data.iterrows():
+            # For each column in the row, create a BaseSummaryModel object
+            summary = BaseSummaryModel()
+
+            # Fill the class
+            class_iter = 0
+            for property in summary.__dict__:
+                summary.__dict__[property] = row[csv_columns[class_iter]]
+                class_iter += 1
+
+            # # Print each item in summary
+            # for item in summary:
+            #     print(item)
+
+            # print(f"Class Properties: {dir(summary)}")
+            # print("\n\n")
+
+            # From UTC to Standard Time
+            summary.UTC_date = fd.format_utc_to_standard(summary.UTC_date)
+
+            # Add the summary object to the list
+            data_summary.append(summary)
+
+        return data_summary
+    
     # TEST METHOD
     def TEST_DATA_HANDLER(self):
         # Add the variables to the DataHandler object
-        self.start_date = "01/20/2020 12:00 AM"
+        self.start_date = "01/18/2020 12:00 AM"
         self.end_date = "01/21/2020 12:00 AM"
-        self.graph_filter = ['Eda avg', 'Movement intensity', 'Rest', 'On Wrist', 'Steps count']
+        self.graph_filter = ['Datetime (Standard)', 'Eda avg', 'Movement intensity', 'Rest', 'On Wrist', 'Steps count']
         self.file_index = "summary.csv"
         self.device_OS = "All Devices"
-        self.subject_id = "310"
+        self.subject_id = "All Subjects"
         self.is_standard_time = True
 
 # Testing only
@@ -212,51 +223,22 @@ if __name__ == "__main__":
     Testing the process_filtering function
     """
     print("\n\n#################################### Process Filtering ####################################")
-    start_date = "01/20/2020 12:00 AM"
-    end_date = "01/21/2020 12:00 AM"
-    filtering = ['Movement intensity', 'Rest']
-    
     # Add the variables to the DataHandler object
-    data_handler.start_date = start_date
-    data_handler.end_date = end_date
-    data_handler.graph_filter = filtering
-    data_handler.file_index = "summary.csv"
-    data_handler.device_OS = "All Devices"
-    data_handler.subject_id = "310"
-    data_handler.is_standard_time = True
+    data_handler.TEST_DATA_HANDLER()
 
     # Process the data
     print(data_handler.process_data_filtering(True))
     
 
-    
-    # # DONE: Given a date range, parse all CSV files into a list of BaseSummaryModel objects
-    # file type:
-    file_index = "summary.csv"
-
     """
     Get the list of paths to the csv files with parsed data
     """
     print ("\n\n#################################### Get Path List #####################################")
-
-    # start_date = "2020-01-20T23:48:00Z"
-    # start_date = fd.format_utc_to_standard(start_date)
-
-    # end_date = "2020-01-20T23:48:00Z"
-    # end_date = fd.format_utc_to_standard(end_date)
-
-    date_range = fd.get_path_date_range(start_date, end_date)
-
-    # Create the DataHandler object
-    data_handler = DataHandler()
-
-    # Assign the variables to the DataHandler object
-    data_handler.file_index = file_index
-    data_handler.start_date = start_date
-    data_handler.end_date = end_date
-
+    
+    date_range = fd.get_path_date_range(data_handler.start_date, data_handler.end_date)
+    
     # Get the list of paths
-    path_list = data_handler.get_path_list(date_range, file_index, "310")
+    path_list = data_handler.get_path_list(date_range, data_handler.file_index, data_handler.subject_id)
 
     for path in path_list:
         print(path)

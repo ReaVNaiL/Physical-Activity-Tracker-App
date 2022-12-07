@@ -2,7 +2,6 @@ from PyQt5 import QtWidgets
 from DataHandler import DataHandler
 from gui.MainWindow import UI_MainWindow
 from gui.SecondWindow import UI_SecondWindow
-from gui.models.InputModel import InputModel
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFormLayout, QVBoxLayout, QGroupBox, QFormLayout, QListWidgetItem, QMessageBox
 from helpers.date_axis import DateAxisItem
@@ -10,7 +9,6 @@ from helpers.date_axis import DateAxisItem
 import sys
 import pyqtgraph as pg
 import pandas as pd
-import matplotlib as plt
 import numpy as np
 
 class DataVisualizer:
@@ -123,7 +121,6 @@ class DataVisualizer:
             QMessageBox.about(self.MainWindow, "Alert", "No Records Found!")
         else:
             # Populate the graph area
-            # BUG: This is not working
             self.populate_graph_test(len(filtered_records.columns), filtered_records)
 
     # TEST METHODS
