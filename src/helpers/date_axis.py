@@ -30,9 +30,10 @@ class DateAxisItem(AxisItem):
     # Max width in pixels reserved for each label in axis
     _pxLabelWidth = 120
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, is_standard, *args, **kwargs):
         AxisItem.__init__(self, *args, **kwargs)
         self._oldAxis = None
+        self._is_standard = is_standard
 
     def tickValues(self, minVal, maxVal, size):
         """
@@ -115,28 +116,49 @@ class DateAxisItem(AxisItem):
         return [(d.total_seconds(), majticks)]
 
     def tickStrings(self, values, scale, spacing):
-        """Reimplemented from PlotItem to adjust to the range"""
+        """
+        Reimplemented from PlotItem to adjust to the range
+        
+        If `self._is_standard` is `True`, the format is standard, otherwise, the format is UTC
+        """
         ret = []
         if not values:
             return []
-
         if spacing >= 31622400:  # 366 days
             fmt = "%Y"
 
         elif spacing >= 2678400:  # 31 days
-            fmt = "%d/%Y"
+            if self._is_standard:
+                fmt = "%m/%Y"
+            else:
+                fmt = "%Y-%m"
 
         elif spacing >= 86400:  # = 1 day
-            fmt = "%m/%d/%Y"
+            if self._is_standard:
+                fmt = "%m/%d/%Y"
+            else:
+                fmt = "%Y-%m-%d"
 
         elif spacing >= 3600:  # 1 h
-            fmt = "%m/%d/%Y %I:00 %p"
-
+            # fmt = "%m/%d/%Y %I:00 %p"
+            if self._is_standard:
+                fmt = "%m/%d/%Y %I:00 %p"
+            else:
+                fmt = "%Y-%m-%dT%H:00"
+                
         elif spacing >= 60:  # 1 m
-            fmt = "%m/%d/%Y %I:%M %p"
+            # fmt = "%m/%d/%Y %I:%M %p"
+            if self._is_standard:
+                fmt = "%m/%d/%Y %I:%M %p"
+            else:
+                fmt = "%Y-%m-%dT%H:%M:%SZ"
 
         elif spacing >= 1:  # 1s
-            fmt = "%H:%M:%S %p"
+            # fmt = "%H:%M:%S %p"
+            if self._is_standard:
+                fmt = "%H:%M:%S %p"
+            else:
+                fmt = "T%H:%M:%SZ"
 
         else:
             # less than 2s (show microseconds)
