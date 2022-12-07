@@ -43,6 +43,10 @@ class DataHandler(InputModel):
         4- Filter the dataframe based on the input model
         5- Return the filtered dataframe
         """
+        
+        # TODO
+        # self.TEST_DATA_HANDLER()
+        
         # Get the path date range
         date_range = fd.get_path_date_range(self.start_date, self.end_date)
         
@@ -62,20 +66,22 @@ class DataHandler(InputModel):
         # after the Datetime (UTC) column
         self.generate_standard_time_column(record_df)
 
-         # Remove the data that is not in the date range
+        # BUG: The filtering is not working properly
+        # Remove the data that is not in the date range
         record_df = self.filter_dates(record_df, self.start_date, self.end_date)
 
         if filter_enabled:
             # Now filtering the dataframe based on the graph_filter
             for column in record_df.columns:
                 # If the column is datetime, skip it
-                if column == "Datetime (UTC)" or column == "Datetime (Standard)": 
+                # if column == "Datetime (UTC)" or column == "Datetime (Standard)" or column == "Unix Timestamp (UTC)": 
+                if column == "Unix Timestamp (UTC)":
                     continue
                 
                 if column not in self.graph_filter:
                     record_df = record_df.drop(column, axis=1)
         
-        record_df = self.extract_datetime_format(record_df)
+        # record_df = self.extract_datetime_format(record_df)
 
         # Return the filtered dataframe
         return record_df
@@ -195,14 +201,10 @@ class DataHandler(InputModel):
     
     # TEST METHOD
     def TEST_DATA_HANDLER(self):
-        start_date = "01/20/2020 12:00 AM"
-        end_date = "01/21/2020 12:00 AM"
-        filtering = ['Movement intensity', 'Rest']
-        
         # Add the variables to the DataHandler object
-        self.start_date = start_date
-        self.end_date = end_date
-        self.graph_filter = filtering
+        self.start_date = "01/20/2020 12:00 AM"
+        self.end_date = "01/21/2020 12:00 AM"
+        self.graph_filter = ['Movement intensity', 'Rest', 'On Wrist', 'Steps count']
         self.file_index = "summary.csv"
         self.device_OS = "All Devices"
         self.subject_id = "310"

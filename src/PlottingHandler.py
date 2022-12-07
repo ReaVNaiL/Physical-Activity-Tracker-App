@@ -1,12 +1,15 @@
 import sys
 import helpers.format_date as ft
+from helpers.x_axis_datetime import DateAxisItem
 from DataHandler import DataHandler
 from PyQt5.QtWidgets import QApplication, QWidget, QScrollArea, QVBoxLayout, QGroupBox, QLabel, QPushButton, QFormLayout
 from PyQt5 import QtGui
+from datetime import datetime
 
 import sys
 import pyqtgraph as pg
 import pandas as pd
+import numpy as np
 
 class PlottingHandler:
     def __init__(self):
@@ -25,7 +28,7 @@ class PlottingHandler:
         y_axis = self.data["Eda avg"]
         
         # new_time = ft.convert_timestamp_standard(x_axis.to_list()[2])
-
+        
 class Window(QWidget):
     def __init__(self, input_val, data_handler: PlottingHandler):
         super().__init__()
@@ -46,14 +49,25 @@ class Window(QWidget):
         
         df = self._data_handler.data
 
-        for i in range(input_val):
-            y = df['Unix Timestamp (UTC)'].to_list() #x_axis is time
-            y2 = df['Eda avg'].to_list() #y_axis is mng avg
+        # This returns epoch time in milliseconds
+        x_axis = df['Unix Timestamp (UTC)'].to_list() #x_axis is time
+        y_axis = df['Eda avg'].to_list() #y_axis is mng avg
 
-            plot = pg.PlotWidget()
-            plot.plot(y, y2, pen='r')
-
+        # Set the x-axis to seconds since epoch
+        start_date = x_axis[0] / 1000
+        end_date = x_axis[-1] / 1000
+        date_range = np.linspace(start_date, end_date, len(x_axis))
         
+        for i in range(input_val):
+            # Generating plot widget
+            plot = pg.PlotWidget()
+            
+            # Set up the x-axis to display the time and date
+            axis = DateAxisItem(orientation='bottom')
+            axis.attachToPlotItem(plot.getPlotItem())
+            
+            plot.plot(x=date_range, y=y_axis, pen="r")
+
             plotWidget_list.append(plot)
             formLayout.addRow(plotWidget_list[i])
 

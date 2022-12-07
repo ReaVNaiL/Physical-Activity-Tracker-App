@@ -5,6 +5,7 @@ from gui.SecondWindow import UI_SecondWindow
 from gui.models.InputModel import InputModel
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFormLayout, QVBoxLayout, QGroupBox, QFormLayout, QListWidgetItem, QMessageBox
+from helpers.x_axis_datetime import DateAxisItem
 
 import sys
 import pyqtgraph as pg
@@ -107,7 +108,7 @@ class DataVisualizer:
         self._handler.graph_filter = filters
 
         # Get the data from the handler
-        filtered_records = self._handler.process_data_filtering()
+        filtered_records = self._handler.process_data_filtering(filter_enabled=True)
 
         if len(filtered_records) == 0:
             QMessageBox.about(self.MainWindow, "Alert", "No Records Found!")
@@ -125,27 +126,31 @@ class DataVisualizer:
         formLayout = QFormLayout()
         groupBox = QGroupBox()
         plotWidget_list = []
+
+        # Get the Unix Timestamp
+        x_axis = records_df['Unix Timestamp (UTC)'].to_list()
         
-        # for i in range(count):
-        #     x = 
-        #     y2 = [2, 3, 4]
-
-        #     plot = pg.PlotWidget()
-        #     plot.setMinimumSize(225, 225)
-        #     plot.plot(y, y2, pen="r")
-        #     plotWidget_list.append(plot)
-        #     formLayout.addRow(plotWidget_list[i])
-
-        date_column = records_df.columns[0]
-        x_axis = records_df[date_column].to_list()
+        # Set the x-axis to seconds since epoch
+        start_date = x_axis[0] / 1000
+        end_date = x_axis[-1] / 1000
+        date_range = np.linspace(start_date, end_date, len(x_axis))
         
         count = 0
         for record in records_df.columns[1:]:
+            # setting y_axis
             y_axis = records_df[record].to_list()
+            
+            # Generating plot widget
             plot = pg.PlotWidget()
             plot.setMinimumSize(225, 225)
-            c = pg.PlotDataItem(x_axis, y_axis)
-            plot.addItem(c)
+            
+            # Set up the x-axis to display the time and date
+            axis = DateAxisItem(orientation='bottom')
+            axis.attachToPlotItem(plot.getPlotItem())
+            
+            # Plot the data
+            plot.plot(x=date_range, y=y_axis, pen="r")
+
             plotWidget_list.append(plot)
             formLayout.addRow(plotWidget_list[count])
             count += 1
