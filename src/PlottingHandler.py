@@ -1,6 +1,6 @@
 import sys
 import helpers.format_date as ft
-from helpers.x_axis_datetime import DateAxisItem
+from helpers.date_axis import DateAxisItem
 from DataHandler import DataHandler
 from PyQt5.QtWidgets import QApplication, QWidget, QScrollArea, QVBoxLayout, QGroupBox, QLabel, QPushButton, QFormLayout
 from PyQt5 import QtGui
@@ -44,7 +44,7 @@ class Window(QWidget):
         
     def plot_graph(self, input_val):
         formLayout = QFormLayout()
-        groupBox = QGroupBox("This Is Group Box")
+        groupBox = QGroupBox()
         plotWidget_list = []
         
         df = self._data_handler.data
@@ -67,6 +67,12 @@ class Window(QWidget):
             axis.attachToPlotItem(plot.getPlotItem())
             
             plot.plot(x=date_range, y=y_axis, pen="r")
+            
+            # display grid
+            plot.showGrid(x=True, y=True)
+            plot.setLabel('left', "EDA Avg")
+            plot.setTitle("EDA Avg")
+            
 
             plotWidget_list.append(plot)
             formLayout.addRow(plotWidget_list[i])

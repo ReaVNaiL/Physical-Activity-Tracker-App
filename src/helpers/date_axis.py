@@ -130,7 +130,7 @@ class DateAxisItem(AxisItem):
             fmt = "%m/%d/%Y"
 
         elif spacing >= 3600:  # 1 h
-            fmt = "%m/%d/%Y %I %p"
+            fmt = "%m/%d/%Y %I:00 %p"
 
         elif spacing >= 60:  # 1 m
             fmt = "%m/%d/%Y %I:%M %p"
