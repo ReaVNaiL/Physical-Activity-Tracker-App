@@ -45,7 +45,7 @@ class DataHandler(InputModel):
         """
         
         # TODO
-        # self.TEST_DATA_HANDLER()
+        self.TEST_DATA_HANDLER()
         
         # Get the path date range
         date_range = fd.get_path_date_range(self.start_date, self.end_date)
@@ -204,7 +204,7 @@ class DataHandler(InputModel):
         # Add the variables to the DataHandler object
         self.start_date = "01/20/2020 12:00 AM"
         self.end_date = "01/21/2020 12:00 AM"
-        self.graph_filter = ['Movement intensity', 'Rest', 'On Wrist', 'Steps count']
+        self.graph_filter = ['Eda avg', 'Movement intensity', 'Rest', 'On Wrist', 'Steps count']
         self.file_index = "summary.csv"
         self.device_OS = "All Devices"
         self.subject_id = "310"
