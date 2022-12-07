@@ -43,9 +43,7 @@ class DataHandler(InputModel):
         4- Filter the dataframe based on the input model
         5- Return the filtered dataframe
         """
-        
-        # TODO
-        self.TEST_DATA_HANDLER()
+
         
         # Get the path date range
         date_range = fd.get_path_date_range(self.start_date, self.end_date)
@@ -81,21 +79,9 @@ class DataHandler(InputModel):
                 if column not in self.graph_filter:
                     record_df = record_df.drop(column, axis=1)
         
-        # record_df = self.extract_datetime_format(record_df)
-
         # Return the filtered dataframe
         return record_df
 
-    def extract_datetime_format(self, record_df: pd.DataFrame):
-        """
-        If the `is_standard_time` is `True`, then extract the `Datetime (Standard)` column
-        else extract the `Datetime (UTC)` column
-        """
-        if self.is_standard_time:
-            record_df = record_df.drop('Datetime (UTC)', axis=1)
-        else: 
-            record_df = record_df.drop('Datetime (Standard)', axis=1)
-        return record_df
 
     def generate_standard_time_column(self, csv_data: pd.DataFrame):
         """
