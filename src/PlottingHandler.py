@@ -48,40 +48,56 @@ class Window(QWidget):
         plotWidget_list = []
         
         df = self._data_handler.data
+        
+        # get column names
+        
 
         # This returns epoch time in milliseconds
         x_axis = df['Unix Timestamp (UTC)'].to_list() #x_axis is time
-        y_axis = df['Eda avg'].to_list() #y_axis is mng avg
+        
+        # Drop the Datetime (Standard) column
+        df = df.drop(columns=['Datetime (Standard)'])
+        df = df.drop(columns=['Datetime (UTC)'])
 
         # Set the x-axis to seconds since epoch
         start_date = x_axis[0] / 1000
         end_date = x_axis[-1] / 1000
         date_range = np.linspace(start_date, end_date, len(x_axis))
         
-        for i in range(input_val):
-            # Generating plot widget
-            plot = pg.PlotWidget()
-            
-            # Set up the x-axis to display the time and date
-            axis = DateAxisItem(orientation='bottom')
-            axis.attachToPlotItem(plot.getPlotItem())
-            
-            plot.plot(x=date_range, y=y_axis, pen="r")
-            
-            # display grid
-            plot.showGrid(x=True, y=True)
-            plot.setLabel('left', "EDA Avg")
-            plot.setTitle("EDA Avg")
-            
+        count = 0
+        for column in df.columns:
+            try:
+                y_axis = df[column].to_list() #y_axis is mng avg
 
-            plotWidget_list.append(plot)
-            formLayout.addRow(plotWidget_list[i])
+                # Generating plot widget
+                plot = pg.PlotWidget()
+                
+                # Set up the x-axis to display the time and date
+                axis = DateAxisItem(orientation='bottom', is_standard=True)
+                axis.attachToPlotItem(plot.getPlotItem())
+                plot.setMinimumSize(300, 300)
+                
+                plot.plot(x=date_range, y=y_axis, pen="r")
+                
+                # display grid
+                plot.showGrid(x=True, y=True)
+                plot.setLabel('left', column)
+                plot.setTitle(column)
+                
+
+                plotWidget_list.append(plot)
+                formLayout.addRow(plotWidget_list[count])
+                count += 1
+            except Exception as e:
+                print("Could not plot graph: ", column, "\nError: " + str(e))
+                continue
+                
 
         groupBox.setLayout(formLayout)
         scroll = QScrollArea()
         scroll.setWidget(groupBox)
         scroll.setWidgetResizable(True)
-        scroll.setFixedHeight(400)
+        scroll.setFixedHeight(1200)
         layout = QVBoxLayout(self)
         layout.addWidget(scroll)
         self.show()
@@ -91,5 +107,5 @@ if __name__ == "__main__":
     plotting_handler = PlottingHandler()
     plotting_handler.TEST_PLOTTING_HANDLER()
     App = QApplication(sys.argv)
-    window = Window(1, plotting_handler)
+    window = Window(3, plotting_handler)
     sys.exit(App.exec())
