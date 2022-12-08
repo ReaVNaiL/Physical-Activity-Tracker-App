@@ -57,7 +57,6 @@ class DataHandler(InputModel):
         # Load the csv files into a dataframe
         record_df = self.import_csv_data_frames(path_list)
 
-        
         # Add the standard time column to the dataframe
         self.generate_standard_time_column(record_df)
         
@@ -74,6 +73,59 @@ class DataHandler(InputModel):
         # Return the filtered dataframe
         return record_df
 
+    def process_all_subjects_data_filtering(self, filter_enabled: bool):
+        """
+        Given the input model, return a dataframe of the filtered data.
+        * Get the path date range
+        * Get the path list of the files using the file_index (summary or metadata) and subject_id (if applicable)
+        * Load the csv files into a dataframe
+        * Filter the dataframe based on the input model
+        * Return the filtered dataframe
+        """
+        subject_id_list = ["310", "311", "312"]
+        
+        # Get the path date range
+        date_range = fd.get_path_date_range(self.start_date, self.end_date)
+        
+        # If the date range is empty return None
+        if len(date_range) == 0:
+            return []
+        
+        # Populate path list for each subject
+        subject_df_list = []
+        
+        for subject_id in subject_id_list:
+            # Get path list for each subject
+            path_list = self.get_path_list(date_range, self.file_index, subject_id)
+            
+            if len(path_list) == 0:
+                return []
+            
+            # Load the csv files into a dataframe
+            record_df = self.import_csv_data_frames(path_list)
+
+            # Add the standard time column to the dataframe
+            self.generate_standard_time_column(record_df)
+            
+            # Replace Unix Timestamp (UTC) with Datetime (UTC) converted to timestamp
+            record_df["Unix Timestamp (UTC)"] = record_df["Datetime (UTC)"].apply(fd.convert_utc_to_timestamp)
+
+            # Remove the data that is not in the date range
+            record_df = self.filter_dates(record_df, self.start_date, self.end_date)
+
+            if filter_enabled:
+                # Filter the dataframe based on the input model
+                record_df = self.filter_data(record_df, self.graph_filter)
+            
+            subject_df_list.append(record_df)
+            
+            # Add the subject id to the dataframe
+            record_df["Subject ID"] = subject_id
+            
+        return subject_df_list
+        
+            
+    
     def filter_data(self, record_df: pd.DataFrame, filters: list[str]):
         """
         Given a `dataframe` and a `list` of `filters`, return a `dataframe` with the `filters` applied
@@ -162,7 +214,7 @@ class DataHandler(InputModel):
         name_path = os.path.join(os.path.dirname(__file__), "..\\data\\20200118\\310\\")
         columns = pd.read_csv(f"{name_path}{index}", nrows=0).columns
         # Dont include the first column
-        return [str(column) for column in columns][1:]
+        return [str(column) for column in columns][3:]
     
     # DEPRECATED METHODS
     def parse_data_summary(self, csv_data: pd.DataFrame):

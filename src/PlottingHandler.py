@@ -90,6 +90,7 @@ class Window(QWidget):
         axis = DateAxisItem(orientation='bottom', is_standard=True)
         axis.attachToPlotItem(plot.getPlotItem())
         plot.setMinimumSize(300, 300)
+        plot.setBackground((150, 150, 150))
         
         # Choose a random color for the pen between blue and purple
         pen_color = (np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255))
