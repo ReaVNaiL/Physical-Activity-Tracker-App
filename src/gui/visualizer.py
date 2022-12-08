@@ -23,6 +23,7 @@ class DataVisualizer:
         self.MainWindow = QtWidgets.QMainWindow()
         self._UI.setupUi(self.MainWindow)
         self.MainWindow.show()
+        self.MainWindow.setFixedSize(1755, 773)
         pg.PlotWidget()
 
         # with open("src/gui/style/stylesheet.css", "r") as f:
@@ -221,7 +222,8 @@ class DataVisualizer:
         # Subject colors:
         subject_colors = [(36, 158, 121), (179, 155, 215), (215, 239, 188)]
         brush_colors = [(36, 158, 121, 80), (179, 155, 215, 80), (215, 239, 188, 80)]
-
+        self.sync_plots: list[pg.PlotItem] = [] 
+        
         for column in df_columns:
             # Generating plot widget
             plot = graph_layout.addPlot(col=0)
@@ -261,14 +263,14 @@ class DataVisualizer:
                 # Plot the data
                 legend_plot = None
 
-                if column == "Movement intensity" or column == "Temp avg":
+                if column == "Movement intensity" or column == "Rest":
                     legend_plot = plot.plot(
                         x=date_range,
                         y=y_axis,
                         pen=None,
                         symbol= random.choice(["o", "t1", "t"]),
                         symbolPen=None,
-                        symbolSize=15,
+                        symbolSize=10,
                         symbolBrush=brush_colors[color_index],
                     )
                 elif column == "On Wrist":
@@ -292,7 +294,8 @@ class DataVisualizer:
                 # Add the y-axis data to the list
                 Y_limits.extend(y_axis)
                 color_index += 1
-
+                self.sync_plots.append(plot)
+                
             # # Prevent zooming past the data
             min_Y, max_Y = -0.1, 1.1
             if not column == "On Wrist":
@@ -312,11 +315,23 @@ class DataVisualizer:
             # Increment the row
             graph_layout.nextRow()
 
+
+        for g in self.sync_plots:
+            g.sigRangeChanged.connect(self.onSigRangeChanged)
+            
         scroll_area = self._UI.graph_area
         scroll_area.setWidget(graph_layout)
         scroll_area.setWidgetResizable(True)
         layout = QVBoxLayout()
         layout.addWidget(scroll_area)
+
+    def onSigRangeChanged(self, r):
+        for g in self.sync_plots:
+            if g !=r :
+                g.blockSignals(True)
+                g.setXRange(*r.viewRange()[0], padding=0)
+                g.blockSignals(False)
+
 
 
 if __name__ == "__main__":

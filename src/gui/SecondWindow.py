@@ -31,7 +31,7 @@ class UI_SecondWindow(object):
 
         self.horizontalLayout.addWidget(self.second_window_left_colum_frame)
         self.mid_frame_arrows = QtWidgets.QFrame(self.second_window_inner_frame_without_save)
-        self.mid_frame_arrows.setStyleSheet("")
+        # self.mid_frame_arrows.setStyleSheet("")
         self.mid_frame_arrows.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.mid_frame_arrows.setFrameShadow(QtWidgets.QFrame.Raised)
         self.mid_frame_arrows.setObjectName("mid_frame_arrows")
