@@ -57,10 +57,12 @@ class DataHandler(InputModel):
         # Load the csv files into a dataframe
         record_df = self.import_csv_data_frames(path_list)
 
-        print(record_df["Unix Timestamp (UTC)"])
         
         # Add the standard time column to the dataframe
         self.generate_standard_time_column(record_df)
+        
+        # Replace Unix Timestamp (UTC) with Datetime (UTC) converted to timestamp
+        record_df["Unix Timestamp (UTC)"] = record_df["Datetime (UTC)"].apply(fd.convert_utc_to_timestamp)
 
         # Remove the data that is not in the date range
         record_df = self.filter_dates(record_df, self.start_date, self.end_date)
@@ -201,7 +203,7 @@ class DataHandler(InputModel):
         # Add the variables to the DataHandler object
         self.start_date = "01/18/2020 12:00 AM"
         self.end_date = "01/21/2020 12:00 AM"
-        self.graph_filter = ['Datetime (Standard)', 'Eda avg', 'Movement intensity', 'Rest', 'On Wrist', 'Steps count']
+        self.graph_filter = ['Eda avg', 'Movement intensity']
         self.file_index = "summary.csv"
         self.device_OS = "All Devices"
         self.subject_id = "All Subjects"

@@ -25,6 +25,12 @@ def format_utc_to_standard(datetimeUTC: str):
     standard_time = date.strptime(datetimeUTC, "%Y-%m-%dT%H:%M:%SZ").strftime("%m/%d/%Y %I:%M %p")
     return standard_time
 
+def convert_utc_to_timestamp(utc: str):
+    """
+    Converts From: 2020-01-17T23:48:00Z
+    To: 1579304880000
+    """
+    return int(date.strptime(utc, "%Y-%m-%dT%H:%M:%SZ").timestamp() * 1000)
 
 def convert_timestamp_standard(timestamp: int):
     """
