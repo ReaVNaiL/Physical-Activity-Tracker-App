@@ -22,7 +22,12 @@ class PlottingHandler:
         # for each attribute of data_handler print the value
         print(repr(self._data_handler))
         
-        self.data = self._data_handler.process_data_filtering(filter_enabled=False)
+        self._data_handler.subject_id = "310"
+        self.data = self._data_handler.process_data_filtering(filter_enabled=True)
+        self._data_handler.subject_id = "311"
+        self.data2 = self._data_handler.process_data_filtering(filter_enabled=True)
+        self._data_handler.subject_id = "312"
+        self.data3 = self._data_handler.process_data_filtering(filter_enabled=True)
         
 class Window(QWidget):
     def __init__(self, input_val, data_handler: PlottingHandler):
@@ -40,51 +45,85 @@ class Window(QWidget):
     def plot_graph(self, input_val):
         formLayout = QFormLayout()
         groupBox = QGroupBox()
-        plotWidget_list = []
         
         df = self._data_handler.data
-        
-        # get column names
-        
+        df2 = self._data_handler.data2
+        df3 = self._data_handler.data3
 
         # This returns epoch time in milliseconds
         x_axis = df['Unix Timestamp (UTC)'].to_list() #x_axis is time
-        
+        x_axis2 = df2['Unix Timestamp (UTC)'].to_list() #x_axis is time
+        x_axis3 = df3['Unix Timestamp (UTC)'].to_list() #x_axis is time
+
         # Drop the Datetime (Standard) column
-        df = df.drop(columns=['Datetime (Standard)'])
-        df = df.drop(columns=['Datetime (UTC)'])
+        # df = df.drop(columns=['Datetime (Standard)'])
+        # df = df.drop(columns=['Datetime (UTC)'])
+        # df = df.drop(columns=['Timezone (minutes)'])
+        df = df.drop(columns=['Unix Timestamp (UTC)'])
 
         # Set the x-axis to seconds since epoch
         start_date = x_axis[0] / 1000
         end_date = x_axis[-1] / 1000
         date_range = np.linspace(start_date, end_date, len(x_axis))
         
-        count = 0
-        for column in df.columns:
-            try:
-                y_axis = df[column].to_list() #y_axis is mng avg
+        df2 = df2.drop(columns=['Unix Timestamp (UTC)'])
 
-                # Generating plot widget
-                plot = pg.PlotWidget()
-                
-                # Set up the x-axis to display the time and date
-                axis = DateAxisItem(orientation='bottom', is_standard=True)
-                axis.attachToPlotItem(plot.getPlotItem())
-                plot.setMinimumSize(300, 300)
-                
-                plot.plot(x=date_range, y=y_axis, pen="r")
-                
-                # display grid
-                plot.showGrid(x=True, y=True)
-                plot.setLabel('left', column)
-                plot.setTitle(column)
-                
-                plotWidget_list.append(plot)
-                formLayout.addRow(plotWidget_list[count])
-                count += 1
-            except Exception as e:
-                print("Could not plot graph: ", column, "\nError: " + str(e))
-                continue
+        # Set the x-axis to seconds since epoch
+        start_date2 = x_axis[0] / 1000
+        end_date2 = x_axis[-1] / 1000
+        date_range2 = np.linspace(start_date2, end_date2, len(x_axis2))
+
+        df3 = df3.drop(columns=['Unix Timestamp (UTC)'])
+        
+        # Set the x-axis to seconds since epoch
+        start_date3 = x_axis[0] / 1000
+        end_date3 = x_axis[-1] / 1000
+        date_range3 = np.linspace(start_date3, end_date3, len(x_axis3))
+        
+        # for column in df.columns:
+        y_axis = df['Movement intensity'].to_list() #y_axis is mng avg
+
+        # Generating plot widget
+        plot = pg.PlotWidget()
+        
+        # Set up the x-axis to display the time and date
+        axis = DateAxisItem(orientation='bottom', is_standard=True)
+        axis.attachToPlotItem(plot.getPlotItem())
+        plot.setMinimumSize(300, 300)
+        
+        # Choose a random color for the pen between blue and purple
+        pen_color = (np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255))
+        
+        # Plot the data
+        subject_310 = plot.plot(x=date_range, y=y_axis, pen=None, symbol='o', symbolPen=None, symbolSize=5, symbolBrush=(255,0,0,150))
+        
+        second_plot = df2['Movement intensity'].to_list()
+        subject_311 = plot.plot(x=date_range2, y=second_plot, pen=None, symbol='o', symbolPen=None, symbolSize=5, symbolBrush=(0,255,0,150))
+        
+        third_plot = df3['Movement intensity'].to_list()
+        subject_312 = plot.plot(x=date_range3, y=third_plot, pen=None, symbol='o', symbolPen=None, symbolSize=5, symbolBrush=(0,0,255,150))
+        
+        # Scatter plot
+        plot.plot()
+        
+        # display grid
+        plot.showGrid(x=True, y=True)
+        plot.setLabel('left', self._data_handler._data_handler.graph_filter[0])
+        plot.setTitle(self._data_handler._data_handler.graph_filter[0])
+        
+        
+        # Prevent zooming past the data
+        plot.setLimits(xMin=date_range[0], xMax=date_range[-1], yMin=min(third_plot), yMax=max(second_plot))
+        
+        # Add legend to the plot for the y-axis
+        legend_y = pg.LegendItem((100, 60), offset=(70, 30))
+        legend_y.setParentItem(plot.graphicsItem())
+        legend_y.addItem(subject_310, "310")
+        legend_y.addItem(subject_311, "311")
+        legend_y.addItem(subject_312, "312")
+        
+        
+        formLayout.addRow(plot)
                 
 
         groupBox.setLayout(formLayout)
