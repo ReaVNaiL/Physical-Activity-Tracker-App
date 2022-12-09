@@ -4,14 +4,19 @@ from time import sleep
 import asyncio
 
 # Path: Physical-Activity-Tracker-App\src\
-from gui.visualizer import DataVisualizer
-from load_csv import load_csv
+from gui.DataVisualizer import DataVisualizer
+from DataHandler import DataHandler
+# from load_csv import DataHandler
 
 def start_up():
     # This function will be called when the app is started
     """ Placeholder for main window """
+    
+    # Instantiate the Data Handler
+    handler = DataHandler()
+    
     # # Show the main window
-    program = DataVisualizer()
+    program = DataVisualizer(handler)
     program.show()
     # program.open_helper_window()
     
