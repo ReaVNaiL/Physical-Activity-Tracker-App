@@ -332,10 +332,20 @@ class DataVisualizer:
         # Assign it only to the first plot
         self.navigator.sigRegionChanged.connect(self.update_plots)
         # self.sync_plots[0].sigXRangeChanged.connect(self.update_navigator)
-            
+        
+        try:
+            for g in self.sync_plots:
+                if self._UI.sync_plot_checkbox.isChecked():   
+                    g.sigRangeChanged.connect(self.onSigRangeChanged)
+                else:
+                    g.sigRangeChanged.disconnect(self.onSigRangeChanged)
+        except:
+            pass    
+        
+        
         # Add the graph_layout to the bottom_left_f
         bottom_graph_layout = pg.GraphicsLayoutWidget()
-        bottom_graph_layout.setFixedHeight(233)
+        bottom_graph_layout.setFixedHeight(153)
         
         navigator_plot = bottom_graph_layout.addPlot(col=0)
         navigator_plot.plot(x=self.sync_plots[0].getAxis("bottom").range, y=self.sync_plots[0].getAxis("left").range, pen="w")
@@ -344,12 +354,10 @@ class DataVisualizer:
         axis.attachToPlotItem(navigator_plot)
         navigator_plot.addItem(self.navigator)
         navigator_plot.setLimits(xMin=start_date, xMax=end_date, yMin=self.sync_plots[0].getAxis("left").range[0], yMax=self.sync_plots[0].getAxis("left").range[1])
+        navigator_plot.setTitle("Navigator")
         
         
-        layout2 = QVBoxLayout()
-        layout2.addWidget(bottom_graph_layout)
-        
-        self._UI.bottom_left_f.setLayout(layout2)
+        self._UI.bottom_left_f.layout().addWidget(bottom_graph_layout)
 
         scroll_area = self._UI.graph_area
         scroll_area.setWidget(graph_layout)
@@ -372,17 +380,24 @@ class DataVisualizer:
         
         # Add graph_layout to the bottom_left_f
         self._UI.bottom_left_f.layout().addWidget(graph_layout)
-        
-    def update_plots(self):
+            
+    def update_plots(self, r):
         for g in self.sync_plots:     
-            if g !=self.navigator:
+            if g != self.navigator:
                 g.blockSignals(True)
-                # Set the view range depending on the navigator
                 g.setXRange(*self.navigator.getRegion(), padding=0)
                 g.blockSignals(False)
-
+        
+    def onSigRangeChanged(self, r):
+        for g in self.sync_plots:
+            if g !=r :
+                g.blockSignals(True)
+                g.setXRange(*r.viewRange()[0], padding=0)
+                g.blockSignals(False)
+                
     def update_navigator(self):
         self.navigator.setRegion(self.sync_plots[0].getViewBox().viewRange()[0])
+    
             
 if __name__ == "__main__":
     helper_UI = DataVisualizer()

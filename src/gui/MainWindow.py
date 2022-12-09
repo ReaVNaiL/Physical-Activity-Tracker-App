@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QFormLayout, QVBoxLayout, QGroupBox, QFormLayout, QListWidgetItem, QMessageBox
 
 
 class UI_MainWindow(object):
@@ -74,6 +75,15 @@ class UI_MainWindow(object):
 
         `menu_file`:
             The file menu that will be used to hold the import, save, and exit actions.
+            
+        `graph_area`:
+            The graph area that will be used to hold the graph.
+        
+        `graph_widget`:
+            The graph widget that will be used to hold the graph.
+        
+        `navigator_area`:
+            The navigator area that will be used to hold the navigator.
 
     `Returns`:
         none
@@ -97,7 +107,7 @@ class UI_MainWindow(object):
         # Main Frames (Containers)
         """
         self.bottom_left_f = QtWidgets.QFrame(self.main_widget)
-        self.bottom_left_f.setGeometry(QtCore.QRect(20, 330, 451, 401))
+        self.bottom_left_f.setGeometry(QtCore.QRect(20, 330, 451, 411))
         self.bottom_left_f.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.bottom_left_f.setFrameShadow(QtWidgets.QFrame.Raised)
         self.bottom_left_f.setObjectName("bottom_left_f")
@@ -289,6 +299,8 @@ class UI_MainWindow(object):
         self.navigator_frame_outter.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.navigator_frame_outter.setFrameShadow(QtWidgets.QFrame.Raised)
         self.navigator_frame_outter.setObjectName("navigator_frame_outter")
+        # Disabled for now
+        self.navigator_frame_outter.setVisible(False)
 
         self.navigator_frame_inner1 = QtWidgets.QFrame(self.navigator_frame_outter)
         self.navigator_frame_inner1.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -316,6 +328,9 @@ class UI_MainWindow(object):
         self.navigator_area.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.navigator_area.setFrameShadow(QtWidgets.QFrame.Raised)
         self.navigator_area.setObjectName("navigator_area")
+        self.navigator_area_layout = QVBoxLayout()
+        self.navigator_area.setLayout(self.navigator_area_layout)
+        
         
         """
         Navigator Layouts
