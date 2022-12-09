@@ -316,24 +316,74 @@ class DataVisualizer:
             graph_layout.nextRow()
 
 
-        for g in self.sync_plots:
-            g.sigRangeChanged.connect(self.onSigRangeChanged)
+        # for plot in self.sync_plots:
+        #     plot.sigRangeChanged.connect(self.onSigRangeChanged)
+        
+        # Take the middle date + half a day
+        navigator_region_start = (end_date - start_date) / 2 + start_date - 21600
+        navigator_region_end = navigator_region_start + 43200
+
+        # Add a region to the first plot
+        self.navigator = pg.LinearRegionItem([navigator_region_start, navigator_region_end])
+        self.navigator.setBrush(pg.mkBrush(255, 255, 255, 100))
+        self.navigator.setZValue(-10)
+        self.sync_plots[0].addItem(self.navigator)
             
+        # Assign it only to the first plot
+        self.navigator.sigRegionChanged.connect(self.update_plots)
+        # self.sync_plots[0].sigXRangeChanged.connect(self.update_navigator)
+            
+        # Add the graph_layout to the bottom_left_f
+        bottom_graph_layout = pg.GraphicsLayoutWidget()
+        bottom_graph_layout.setFixedHeight(233)
+        
+        navigator_plot = bottom_graph_layout.addPlot(col=0)
+        navigator_plot.plot(x=self.sync_plots[0].getAxis("bottom").range, y=self.sync_plots[0].getAxis("left").range, pen="w")
+        # Set up the x-axis to display the time and date
+        axis = DateAxisItem(orientation="bottom", is_standard=self._handler.is_standard_time)
+        axis.attachToPlotItem(navigator_plot)
+        navigator_plot.addItem(self.navigator)
+        navigator_plot.setLimits(xMin=start_date, xMax=end_date, yMin=self.sync_plots[0].getAxis("left").range[0], yMax=self.sync_plots[0].getAxis("left").range[1])
+        
+        
+        layout2 = QVBoxLayout()
+        layout2.addWidget(bottom_graph_layout)
+        
+        self._UI.bottom_left_f.setLayout(layout2)
+
         scroll_area = self._UI.graph_area
         scroll_area.setWidget(graph_layout)
         scroll_area.setWidgetResizable(True)
         layout = QVBoxLayout()
         layout.addWidget(scroll_area)
 
-    def onSigRangeChanged(self, r):
-        for g in self.sync_plots:
-            if g !=r :
+    def create_navigator_graph(self, date_range: list):
+        """_summary_
+
+        Args:
+            records_df (pd.DataFrame): _description_
+        """
+
+        # Set the graph layout height times the record count
+        graph_layout = pg.GraphicsLayoutWidget()
+        graph_layout.setFixedHeight(self._UI.bottom_left_f.height())
+        
+        
+        
+        # Add graph_layout to the bottom_left_f
+        self._UI.bottom_left_f.layout().addWidget(graph_layout)
+        
+    def update_plots(self):
+        for g in self.sync_plots:     
+            if g !=self.navigator:
                 g.blockSignals(True)
-                g.setXRange(*r.viewRange()[0], padding=0)
+                # Set the view range depending on the navigator
+                g.setXRange(*self.navigator.getRegion(), padding=0)
                 g.blockSignals(False)
 
-
-
+    def update_navigator(self):
+        self.navigator.setRegion(self.sync_plots[0].getViewBox().viewRange()[0])
+            
 if __name__ == "__main__":
     helper_UI = DataVisualizer()
     helper_UI.show()
