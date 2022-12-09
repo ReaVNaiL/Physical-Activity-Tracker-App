@@ -1,142 +1,22 @@
-from PyQt5 import QtWidgets
-from DataHandler import DataHandler
+import random
+import sys
 from gui.MainWindow import UI_MainWindow
-from gui.SecondWindow import UI_SecondWindow
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QFormLayout, QVBoxLayout, QGroupBox, QFormLayout, QListWidgetItem, QMessageBox
 from helpers.date_axis import DateAxisItem
+from DataHandler import DataHandler
+from PyQt5.QtWidgets import QApplication, QWidget, QScrollArea, QVBoxLayout, QGroupBox, QLabel, QPushButton, QFormLayout
+from PyQt5 import QtGui
+from datetime import datetime
 
 import sys
 import pyqtgraph as pg
 import pandas as pd
 import numpy as np
-import random
 
 
-class DataVisualizer:
-    def __init__(self, handler: DataHandler) -> None:
-        self._UI = UI_MainWindow()
+class GraphPlotHandler():
+    def __init__(self, UI: UI_MainWindow, handler: DataHandler):
+        self._UI = UI
         self._handler = handler
-
-    def show(self):
-        app = QtWidgets.QApplication(sys.argv)
-        self.MainWindow = QtWidgets.QMainWindow()
-        self._UI.setupUi(self.MainWindow)
-        self.MainWindow.show()
-        self.MainWindow.setFixedSize(1755, 773)
-        pg.PlotWidget()
-
-        # with open("src/gui/style/stylesheet.css", "r") as f:
-        #     app.setStyleSheet(f.read())
-
-        # This Adds The Second Window
-        select_button = self._UI.select_button
-        select_button.clicked.connect(self.open_helper_window)
-
-        # Import Button
-        self.populate_dropdowns()
-
-        sys.exit(app.exec_())
-
-    def open_helper_window(self):
-        self.helper_window = QtWidgets.QMainWindow()
-        self.helper_UI = UI_SecondWindow()
-        self.helper_UI.setupUI(self.helper_window)
-        self.helper_window.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.WindowCloseButtonHint)
-        self.helper_window.setMaximumSize(821, 374)
-        self.helper_window.setMinimumSize(821, 374)
-        self.helper_window.show()
-
-        # Create the Input Model
-        self.create_input_model()
-
-        # Populate the helper window
-        self.populate_helper_window()
-
-        # Add the event listener for the import button
-        self.helper_UI.submit_button.clicked.connect(self.submit_data)
-
-    def populate_dropdowns(self):
-        # Populate index box:
-        self._UI.index_dropdown.addItem("summary.csv")
-        self._UI.index_dropdown.addItem("metadata.csv")
-
-        # Populate Subject box:
-        self._UI.subject_dropdown.addItem("All Subjects")
-        self._UI.subject_dropdown.addItem("310")
-        self._UI.subject_dropdown.addItem("311")
-        self._UI.subject_dropdown.addItem("312")
-
-        # Populate device dropdown
-        self._UI.device_dropdown.addItem("All Devices")
-        self._UI.device_dropdown.addItem("Android")
-        self._UI.device_dropdown.addItem("iOS")
-
-    def populate_helper_window(self):
-        """
-        Populates the helper window with the data from the `InputModel` into the input fields
-        """
-        index = self._UI.index_dropdown.currentText()
-
-        header_list = self._handler.get_headers(index)
-
-        # Populate the list widget
-        for header in header_list:
-            item = QListWidgetItem(header)
-            self.helper_UI.left_list.addItem(item)
-
-        try:
-            # Populate the right list with the list of items that are selected
-            self.helper_UI.right_list.addItems(self._handler.graph_filter)
-            # Remove the items from the left list
-            for item in self._handler.graph_filter:
-                self.helper_UI.left_list.takeItem(
-                    self.helper_UI.left_list.row(self.helper_UI.left_list.findItems(item, Qt.MatchExactly)[0])
-                )
-        except:
-            pass
-
-        # Add Event Listeners for the arrows
-        self.helper_UI.add_arrow.clicked.connect(self.helper_UI.add_item_to_right_list)
-        self.helper_UI.remove_arrow.clicked.connect(self.helper_UI.add_item_to_left_list)
-
-    def create_input_model(self):
-        self._handler.file_index = self._UI.index_dropdown.currentText()
-        self._handler.subject_id = self._UI.subject_dropdown.currentText()
-        self._handler.device_OS = self._UI.device_dropdown.currentText()
-        self._handler.is_standard_time = self._UI.time_converter_check_box.isChecked()
-        self._handler.start_date = self._UI.start_date.text()
-        self._handler.end_date = self._UI.end_date.text()
-
-    def submit_data(self):
-        """
-        TBD
-        """
-        # Close the Helper Window
-        self.helper_window.close()
-
-        # Get the filtering into the DataHandler
-        filters = self.helper_UI.get_filters()
-        self._handler.graph_filter = filters
-
-        if self._handler.subject_id == "All Subjects":
-            subject_record_list = self._handler.process_all_subjects_data_filtering(filter_enabled=True)
-
-            if len(subject_record_list) == 0:
-                QMessageBox.about(self.MainWindow, "Alert", "No Records Found!")
-            else:
-                # Populate the graph area
-                self.populate_graph_all_subjects(len(subject_record_list[0].columns), subject_record_list)
-
-        # Get the data from the handler
-        else:
-            filtered_records = self._handler.process_data_filtering(filter_enabled=True)
-
-            if len(filtered_records) == 0:
-                QMessageBox.about(self.MainWindow, "Alert", "No Records Found!")
-            else:
-                # Populate the graph area
-                self.populate_graph_subjects(len(filtered_records.columns), filtered_records)
 
     # All The Graphing Functions Need To Be Moved To A New Class
     def populate_graph_subjects(self, record_count: int, records_df: pd.DataFrame):
@@ -222,8 +102,8 @@ class DataVisualizer:
         # Subject colors:
         subject_colors = [(36, 158, 121), (179, 155, 215), (215, 239, 188)]
         brush_colors = [(36, 158, 121, 80), (179, 155, 215, 80), (215, 239, 188, 80)]
-        self.sync_plots: list[pg.PlotItem] = [] 
-        
+        self.sync_plots: list[pg.PlotItem] = []
+
         for column in df_columns:
             # Generating plot widget
             plot = graph_layout.addPlot(col=0)
@@ -268,7 +148,7 @@ class DataVisualizer:
                         x=date_range,
                         y=y_axis,
                         pen=None,
-                        symbol= random.choice(["o", "t1", "t"]),
+                        symbol=random.choice(["o", "t1", "t"]),
                         symbolPen=None,
                         symbolSize=10,
                         symbolBrush=brush_colors[color_index],
@@ -279,14 +159,16 @@ class DataVisualizer:
                         x=date_range,
                         y=y_axis,
                         fillLevel=0,
-                        fillBrush= brush_colors[color_index],
+                        fillBrush=brush_colors[color_index],
                         symbol="s",
                         symbolPen=None,
                         symbolSize=2,
-                        symbolBrush=brush_colors[color_index]
+                        symbolBrush=brush_colors[color_index],
                     )
                 else:
-                    legend_plot = plot.plot(x=date_range + 1, y=y_axis, pen=pen_color, fillLevel=0, fillBrush=(150, 150, 150, 60))
+                    legend_plot = plot.plot(
+                        x=date_range + 1, y=y_axis, pen=pen_color, fillLevel=0, fillBrush=(150, 150, 150, 60)
+                    )
 
                 # Add the legend
                 legend_y.addItem(legend_plot, "Subject: " + record["Subject ID"].to_list()[0])
@@ -295,7 +177,7 @@ class DataVisualizer:
                 Y_limits.extend(y_axis)
                 color_index += 1
                 self.sync_plots.append(plot)
-                
+
             # # Prevent zooming past the data
             min_Y, max_Y = -0.1, 1.1
             if not column == "On Wrist":
@@ -315,10 +197,9 @@ class DataVisualizer:
             # Increment the row
             graph_layout.nextRow()
 
-
         # for plot in self.sync_plots:
         #     plot.sigRangeChanged.connect(self.onSigRangeChanged)
-        
+
         # Take the middle date + half a day
         navigator_region_start = (end_date - start_date) / 2 + start_date - 21600
         navigator_region_end = navigator_region_start + 43200
@@ -328,35 +209,31 @@ class DataVisualizer:
         self.navigator.setBrush(pg.mkBrush(255, 255, 255, 100))
         self.navigator.setZValue(-10)
         self.sync_plots[0].addItem(self.navigator)
-            
+
         # Assign it only to the first plot
         self.navigator.sigRegionChanged.connect(self.update_plots)
         # self.sync_plots[0].sigXRangeChanged.connect(self.update_navigator)
-        
-        try:
-            for g in self.sync_plots:
-                if self._UI.sync_plot_checkbox.isChecked():   
-                    g.sigRangeChanged.connect(self.onSigRangeChanged)
-                else:
-                    g.sigRangeChanged.disconnect(self.onSigRangeChanged)
-        except:
-            pass    
-        
-        
+
         # Add the graph_layout to the bottom_left_f
         bottom_graph_layout = pg.GraphicsLayoutWidget()
         bottom_graph_layout.setFixedHeight(153)
-        
-        navigator_plot = bottom_graph_layout.addPlot(col=0)
-        navigator_plot.plot(x=self.sync_plots[0].getAxis("bottom").range, y=self.sync_plots[0].getAxis("left").range, pen="w")
+
+        navigator_plot = bottom_graph_layout.addPlot(row=0, col=0)
+        navigator_plot.plot(
+            x=self.sync_plots[0].getAxis("bottom").range, y=self.sync_plots[0].getAxis("left").range, pen="w"
+        )
         # Set up the x-axis to display the time and date
         axis = DateAxisItem(orientation="bottom", is_standard=self._handler.is_standard_time)
         axis.attachToPlotItem(navigator_plot)
         navigator_plot.addItem(self.navigator)
-        navigator_plot.setLimits(xMin=start_date, xMax=end_date, yMin=self.sync_plots[0].getAxis("left").range[0], yMax=self.sync_plots[0].getAxis("left").range[1])
+        navigator_plot.setLimits(
+            xMin=start_date,
+            xMax=end_date,
+            yMin=self.sync_plots[0].getAxis("left").range[0],
+            yMax=self.sync_plots[0].getAxis("left").range[1],
+        )
         navigator_plot.setTitle("Navigator")
-        
-        
+
         self._UI.bottom_left_f.layout().addWidget(bottom_graph_layout)
 
         scroll_area = self._UI.graph_area
@@ -375,30 +252,33 @@ class DataVisualizer:
         # Set the graph layout height times the record count
         graph_layout = pg.GraphicsLayoutWidget()
         graph_layout.setFixedHeight(self._UI.bottom_left_f.height())
-        
-        
-        
+
         # Add graph_layout to the bottom_left_f
         self._UI.bottom_left_f.layout().addWidget(graph_layout)
-            
-    def update_plots(self, r):
-        for g in self.sync_plots:     
+
+    def update_plots(self):
+        for g in self.sync_plots:
             if g != self.navigator:
                 g.blockSignals(True)
                 g.setXRange(*self.navigator.getRegion(), padding=0)
                 g.blockSignals(False)
-        
-    def onSigRangeChanged(self, r):
-        for g in self.sync_plots:
-            if g !=r :
-                g.blockSignals(True)
-                g.setXRange(*r.viewRange()[0], padding=0)
-                g.blockSignals(False)
-                
+
     def update_navigator(self):
         self.navigator.setRegion(self.sync_plots[0].getViewBox().viewRange()[0])
-    
-            
+
+    def TEST_PLOTTING_HANDLER(self):
+        print("TEST_PLOTTING_HANDLER")
+
+        # for each attribute of data_handler print the value
+        print(repr(self._data_handler))
+
+        self._data_handler.subject_id = "310"
+        self.data = self._data_handler.process_data_filtering(filter_enabled=True)
+        self._data_handler.subject_id = "311"
+        self.data2 = self._data_handler.process_data_filtering(filter_enabled=True)
+        self._data_handler.subject_id = "312"
+        self.data3 = self._data_handler.process_data_filtering(filter_enabled=True)
+
+
 if __name__ == "__main__":
-    helper_UI = DataVisualizer()
-    helper_UI.show()
+    plotting_handler = GraphPlotHandler()

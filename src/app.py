@@ -4,7 +4,7 @@ from time import sleep
 import asyncio
 
 # Path: Physical-Activity-Tracker-App\src\
-from gui.visualizer import DataVisualizer
+from gui.DataVisualizer import DataVisualizer
 from DataHandler import DataHandler
 # from load_csv import DataHandler
 
