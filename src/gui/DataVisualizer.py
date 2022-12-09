@@ -1,11 +1,11 @@
 from PyQt5 import QtWidgets
-from DataHandler import DataHandler
-from gui.MainWindow import UI_MainWindow
-from gui.SecondWindow import UI_SecondWindow
+from src.DataHandler import DataHandler
+from src.gui.MainWindow import UI_MainWindow
+from src.gui.SecondWindow import UI_SecondWindow
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFormLayout, QVBoxLayout, QGroupBox, QFormLayout, QListWidgetItem, QMessageBox
-from helpers.date_axis import DateAxisItem
-from gui.GraphPlotHandler import GraphPlotHandler
+from src.helpers.date_axis import DateAxisItem
+from src.gui.GraphPlotHandler import GraphPlotHandler
 
 import sys
 import pyqtgraph as pg

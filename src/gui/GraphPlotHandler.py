@@ -1,15 +1,13 @@
 import random
 import sys
-from gui.MainWindow import UI_MainWindow
-from helpers.date_axis import DateAxisItem
-from DataHandler import DataHandler
+from src.gui.MainWindow import UI_MainWindow
+from src.helpers.date_axis import DateAxisItem
+from src.DataHandler import DataHandler
 from PyQt5 import QtWidgets
-from DataHandler import DataHandler
-from gui.MainWindow import UI_MainWindow
-from gui.SecondWindow import UI_SecondWindow
+from src.gui.MainWindow import UI_MainWindow
+from src.gui.SecondWindow import UI_SecondWindow
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFormLayout, QVBoxLayout, QGroupBox, QFormLayout, QListWidgetItem, QMessageBox
-from helpers.date_axis import DateAxisItem
 
 import sys
 import pyqtgraph as pg
