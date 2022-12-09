@@ -138,7 +138,7 @@ class DataVisualizer:
                 # Populate the graph area
                 self.populate_graph_subjects(len(filtered_records.columns), filtered_records)
 
-    # TEST METHODS
+    # All The Graphing Functions Need To Be Moved To A New Class
     def populate_graph_subjects(self, record_count: int, records_df: pd.DataFrame):
         """
         Populates the graph area with the data from the `records_df` parameter
