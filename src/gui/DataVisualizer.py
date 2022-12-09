@@ -18,6 +18,8 @@ class DataVisualizer:
     def __init__(self, handler: DataHandler) -> None:
         self._UI = UI_MainWindow()
         self._handler = handler
+        
+        # Create the plot handler
         self._plot_handler = GraphPlotHandler(self._UI, self._handler)
 
     def show(self):
@@ -28,8 +30,8 @@ class DataVisualizer:
         self.MainWindow.setFixedSize(1755, 773)
         pg.PlotWidget()
 
-        # with open("src/gui/style/stylesheet.css", "r") as f:
-        #     app.setStyleSheet(f.read())
+        with open("src/gui/style/stylesheet.css", "r") as f:
+            app.setStyleSheet(f.read())
 
         # This Adds The Second Window
         select_button = self._UI.select_button
@@ -61,7 +63,7 @@ class DataVisualizer:
     def populate_dropdowns(self):
         # Populate index box:
         self._UI.index_dropdown.addItem("summary.csv")
-        self._UI.index_dropdown.addItem("metadata.csv")
+        # self._UI.index_dropdown.addItem("metadata.csv")
 
         # Populate Subject box:
         self._UI.subject_dropdown.addItem("All Subjects")

@@ -3,9 +3,13 @@ import sys
 from gui.MainWindow import UI_MainWindow
 from helpers.date_axis import DateAxisItem
 from DataHandler import DataHandler
-from PyQt5.QtWidgets import QApplication, QWidget, QScrollArea, QVBoxLayout, QGroupBox, QLabel, QPushButton, QFormLayout
-from PyQt5 import QtGui
-from datetime import datetime
+from PyQt5 import QtWidgets
+from DataHandler import DataHandler
+from gui.MainWindow import UI_MainWindow
+from gui.SecondWindow import UI_SecondWindow
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QFormLayout, QVBoxLayout, QGroupBox, QFormLayout, QListWidgetItem, QMessageBox
+from helpers.date_axis import DateAxisItem
 
 import sys
 import pyqtgraph as pg
@@ -14,11 +18,16 @@ import numpy as np
 
 
 class GraphPlotHandler():
+    sync_plots: list[pg.PlotItem] = []
+
+    nav_bar_created = False
+    subject_colors = [(36, 158, 121), (179, 155, 215), (215, 239, 188)]
+    brush_colors = [(36, 158, 121, 80), (179, 155, 215, 80), (215, 239, 188, 80)]
+    
     def __init__(self, UI: UI_MainWindow, handler: DataHandler):
         self._UI = UI
         self._handler = handler
 
-    # All The Graphing Functions Need To Be Moved To A New Class
     def populate_graph_subjects(self, record_count: int, records_df: pd.DataFrame):
         """
         Populates the graph area with the data from the `records_df` parameter
@@ -29,6 +38,7 @@ class GraphPlotHandler():
 
         """
         # Set the graph layout height times the record count
+        self.CLEAR_PLOTS()
         graph_layout = pg.GraphicsLayoutWidget()
         graph_layout.setFixedHeight(350 * record_count)
 
@@ -41,6 +51,7 @@ class GraphPlotHandler():
         end_date = x_axis[-1] / 1000
         date_range = np.linspace(start_date, end_date, len(x_axis))
 
+        color_index = 0
         for column in records_df.columns:
             # setting y_axis
             y_axis = records_df[column].to_list()
@@ -60,7 +71,7 @@ class GraphPlotHandler():
             pen_color = (np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255))
 
             # Plot the data
-            plot.plot(x=date_range, y=y_axis, pen=pen_color, fillLevel=0, fillBrush=(150, 150, 150, 60))
+            legend_plot = self.paint_plot_design(column, plot, color_index, date_range, y_axis, pen_color)
 
             # display grid
             plot.showGrid(x=True, y=True)
@@ -73,11 +84,18 @@ class GraphPlotHandler():
             # Add legend to the plot for the y-axis
             legend_y = pg.LegendItem((140, 60), offset=(70, 30))
             legend_y.setParentItem(plot.graphicsItem())
-            legend_y.addItem(pg.PlotDataItem(pen=pen_color), column)
+            legend_y.addItem(legend_plot, column)
 
             # Increment the row
             graph_layout.nextRow()
+            
+            # Add the plot to the list of plots to sync
+            self.sync_plots.append(plot)
+            
 
+        # Create the navigator graph
+        self.create_nav_graph(start_date, end_date)
+        
         scroll_area = self._UI.graph_area
         scroll_area.setWidget(graph_layout)
         scroll_area.setWidgetResizable(True)
@@ -91,6 +109,7 @@ class GraphPlotHandler():
             record_count (int): _description_
             record_list (list[pd.DataFrame]): _description_
         """
+        self.CLEAR_PLOTS()
 
         # Set the graph layout height times the record count
         graph_layout = pg.GraphicsLayoutWidget()
@@ -98,11 +117,6 @@ class GraphPlotHandler():
 
         # Saving the graph filter
         df_columns = self._handler.graph_filter
-
-        # Subject colors:
-        subject_colors = [(36, 158, 121), (179, 155, 215), (215, 239, 188)]
-        brush_colors = [(36, 158, 121, 80), (179, 155, 215, 80), (215, 239, 188, 80)]
-        self.sync_plots: list[pg.PlotItem] = []
 
         for column in df_columns:
             # Generating plot widget
@@ -138,37 +152,12 @@ class GraphPlotHandler():
                 y_axis = record[column].to_list()
 
                 # Random Pen Color
-                pen_color = subject_colors[color_index]
+                pen_color = self.subject_colors[color_index]
 
                 # Plot the data
                 legend_plot = None
 
-                if column == "Movement intensity" or column == "Rest":
-                    legend_plot = plot.plot(
-                        x=date_range,
-                        y=y_axis,
-                        pen=None,
-                        symbol=random.choice(["o", "t1", "t"]),
-                        symbolPen=None,
-                        symbolSize=10,
-                        symbolBrush=brush_colors[color_index],
-                    )
-                elif column == "On Wrist":
-                    # Bar graph
-                    legend_plot = plot.plot(
-                        x=date_range,
-                        y=y_axis,
-                        fillLevel=0,
-                        fillBrush=brush_colors[color_index],
-                        symbol="s",
-                        symbolPen=None,
-                        symbolSize=2,
-                        symbolBrush=brush_colors[color_index],
-                    )
-                else:
-                    legend_plot = plot.plot(
-                        x=date_range + 1, y=y_axis, pen=pen_color, fillLevel=0, fillBrush=(150, 150, 150, 60)
-                    )
+                legend_plot = self.paint_plot_design(column, plot, color_index, date_range, y_axis, pen_color)
 
                 # Add the legend
                 legend_y.addItem(legend_plot, "Subject: " + record["Subject ID"].to_list()[0])
@@ -197,66 +186,156 @@ class GraphPlotHandler():
             # Increment the row
             graph_layout.nextRow()
 
-        # for plot in self.sync_plots:
-        #     plot.sigRangeChanged.connect(self.onSigRangeChanged)
-
-        # Take the middle date + half a day
-        navigator_region_start = (end_date - start_date) / 2 + start_date - 21600
-        navigator_region_end = navigator_region_start + 43200
-
-        # Add a region to the first plot
-        self.navigator = pg.LinearRegionItem([navigator_region_start, navigator_region_end])
-        self.navigator.setBrush(pg.mkBrush(255, 255, 255, 100))
-        self.navigator.setZValue(-10)
-        self.sync_plots[0].addItem(self.navigator)
-
-        # Assign it only to the first plot
-        self.navigator.sigRegionChanged.connect(self.update_plots)
-        # self.sync_plots[0].sigXRangeChanged.connect(self.update_navigator)
-
-        # Add the graph_layout to the bottom_left_f
-        bottom_graph_layout = pg.GraphicsLayoutWidget()
-        bottom_graph_layout.setFixedHeight(153)
-
-        navigator_plot = bottom_graph_layout.addPlot(row=0, col=0)
-        navigator_plot.plot(
-            x=self.sync_plots[0].getAxis("bottom").range, y=self.sync_plots[0].getAxis("left").range, pen="w"
-        )
-        # Set up the x-axis to display the time and date
-        axis = DateAxisItem(orientation="bottom", is_standard=self._handler.is_standard_time)
-        axis.attachToPlotItem(navigator_plot)
-        navigator_plot.addItem(self.navigator)
-        navigator_plot.setLimits(
-            xMin=start_date,
-            xMax=end_date,
-            yMin=self.sync_plots[0].getAxis("left").range[0],
-            yMax=self.sync_plots[0].getAxis("left").range[1],
-        )
-        navigator_plot.setTitle("Navigator")
-
-        self._UI.bottom_left_f.layout().addWidget(bottom_graph_layout)
-
+        self.create_nav_graph(start_date, end_date)
+        
         scroll_area = self._UI.graph_area
         scroll_area.setWidget(graph_layout)
         scroll_area.setWidgetResizable(True)
         layout = QVBoxLayout()
         layout.addWidget(scroll_area)
 
-    def create_navigator_graph(self, date_range: list):
+    def paint_plot_design(self, column, plot, color_index, date_range, y_axis, pen_color):
+        if column == "Movement intensity" or column == "Rest":
+            legend_plot = plot.plot(
+                        x=date_range,
+                        y=y_axis,
+                        pen=None,
+                        symbol=random.choice(["o", "t1", "t"]),
+                        symbolPen=None,
+                        symbolSize=10,
+                        symbolBrush=self.brush_colors[color_index],
+                    )
+        elif column == "On Wrist":
+                    # Bar graph
+            legend_plot = plot.plot(
+                        x=date_range,
+                        y=y_axis,
+                        fillLevel=0,
+                        fillBrush=self.brush_colors[color_index],
+                        symbol="s",
+                        symbolPen=None,
+                        symbolSize=2,
+                        symbolBrush=self.brush_colors[color_index],
+                    )
+        else:
+            legend_plot = plot.plot(
+                        x=date_range + 1, y=y_axis, pen=pen_color, fillLevel=0, fillBrush=(150, 150, 150, 60)
+                    )
+            
+        return legend_plot
+
+    def create_nav_graph(self, start_date: int, end_date: int):
         """_summary_
 
         Args:
             records_df (pd.DataFrame): _description_
         """
+                                
+        self.bottom_graph_layout = pg.GraphicsLayoutWidget()
+        self.bottom_graph_layout.setFixedHeight(153)
+        
+        self.navigator = pg.LinearRegionItem()
+        self.navigator.setBrush(pg.mkBrush(255, 255, 255, 100))
+        self.navigator.setZValue(-10)
 
-        # Set the graph layout height times the record count
-        graph_layout = pg.GraphicsLayoutWidget()
-        graph_layout.setFixedHeight(self._UI.bottom_left_f.height())
+        self._UI.bottom_left_f.layout().addWidget(self.bottom_graph_layout)
+        self.nav_bar_created = True
+        
+        # Assign it only to the first plot
+        self.navigator.sigRegionChanged.connect(self.UPDATE_SIGNAL_PLOTS)
+        # self.sync_plots[0].sigXRangeChanged.connect(self.update_navigator)      
+          
+        self.navigator_plot = self.bottom_graph_layout.addPlot(row=0, col=0)
+        
+        # Set up the x-axis to display the time and date
+        axis = DateAxisItem(orientation="bottom", is_standard=self._handler.is_standard_time)
+        axis.attachToPlotItem(self.navigator_plot)
+        
+        self.navigator_plot.addItem(self.navigator)
+        
+        # delete the old navigator
+        self.navigator_plot.clear()
+        
+        # Take the middle date + half a day
+        navigator_region_start = (end_date - start_date) / 2 + start_date - 21600
+        navigator_region_end = navigator_region_start + 43200
+        
+        self.navigator = pg.LinearRegionItem([navigator_region_start, navigator_region_end])
+        self.navigator.sigRegionChanged.connect(self.UPDATE_SIGNAL_PLOTS)
 
-        # Add graph_layout to the bottom_left_f
-        self._UI.bottom_left_f.layout().addWidget(graph_layout)
+        # Set the region with correct start and end date
+        self.navigator_plot.addItem(self.navigator)
+        
+        # Update the plots for 
+        self.navigator_plot.plot(x=self.sync_plots[0].getAxis("bottom").range, y=self.sync_plots[0].getAxis("left").range, pen="w")
+        
+        self.navigator_plot.setLimits(
+            xMin=start_date,
+            xMax=end_date,
+            yMin=self.sync_plots[0].getAxis("left").range[0],
+            yMax=self.sync_plots[0].getAxis("left").range[1],
+        )
+        
+        self.navigator_plot.setTitle("Navigator")
 
-    def update_plots(self):
+    def update_nav_graph(self, start_date: int, end_date: int):
+        """_summary_
+
+        Args:
+            records_df (pd.DataFrame): _description_
+        """
+        
+        # Clear the layout, remove the navigator, and reset the navigator_plot
+        self.bottom_graph_layout.clear()
+        self.navigator_plot = None
+        self.navigator = None
+        
+        self.bottom_graph_layout = pg.GraphicsLayoutWidget()
+        self.bottom_graph_layout.setFixedHeight(153)
+        
+        self.navigator = pg.LinearRegionItem()
+        self.navigator.setBrush(pg.mkBrush(255, 255, 255, 100))
+        self.navigator.setZValue(-10)
+
+        self._UI.bottom_left_f.layout().addWidget(self.bottom_graph_layout)
+        self.nav_bar_created = True
+        
+        # Assign it only to the first plot
+        self.navigator.sigRegionChanged.connect(self.UPDATE_SIGNAL_PLOTS)
+        # self.sync_plots[0].sigXRangeChanged.connect(self.update_navigator)      
+          
+        self.navigator_plot = self.bottom_graph_layout.addPlot(row=0, col=0)
+        
+        # Set up the x-axis to display the time and date
+        axis = DateAxisItem(orientation="bottom", is_standard=self._handler.is_standard_time)
+        axis.attachToPlotItem(self.navigator_plot)
+        
+        self.navigator_plot.addItem(self.navigator)
+        
+        # delete the old navigator
+        self.navigator_plot.clear()
+        
+        # Take the middle date + half a day
+        navigator_region_start = (end_date - start_date) / 2 + start_date - 21600
+        navigator_region_end = navigator_region_start + 43200
+        
+        self.navigator = pg.LinearRegionItem([navigator_region_start, navigator_region_end])
+        self.navigator.sigRegionChanged.connect(self.UPDATE_SIGNAL_PLOTS)
+
+        # Set the region with correct start and end date
+        self.navigator_plot.addItem(self.navigator)
+        
+        # Update the plots for 
+        self.navigator_plot.plot(x=self.sync_plots[0].getAxis("bottom").range, y=self.sync_plots[0].getAxis("left").range, pen="w")
+        
+        self.navigator_plot.setLimits(
+            xMin=start_date,
+            xMax=end_date,
+            yMin=self.sync_plots[0].getAxis("left").range[0],
+            yMax=self.sync_plots[0].getAxis("left").range[1],
+        )
+    
+    def UPDATE_SIGNAL_PLOTS(self):
         for g in self.sync_plots:
             if g != self.navigator:
                 g.blockSignals(True)
@@ -266,18 +345,28 @@ class GraphPlotHandler():
     def update_navigator(self):
         self.navigator.setRegion(self.sync_plots[0].getViewBox().viewRange()[0])
 
+    def CLEAR_PLOTS(self):
+        try:
+            # widget.setParent(None) # this is the key
+            self.bottom_graph_layout.setParent(None)
+            self.navigator_plot.setParent(None)
+            self.navigator.setParent(None)
+        except:
+            pass
+        self.sync_plots = []
+        
     def TEST_PLOTTING_HANDLER(self):
         print("TEST_PLOTTING_HANDLER")
 
         # for each attribute of data_handler print the value
-        print(repr(self._data_handler))
+        print(repr(self._handler))
 
-        self._data_handler.subject_id = "310"
-        self.data = self._data_handler.process_data_filtering(filter_enabled=True)
-        self._data_handler.subject_id = "311"
-        self.data2 = self._data_handler.process_data_filtering(filter_enabled=True)
-        self._data_handler.subject_id = "312"
-        self.data3 = self._data_handler.process_data_filtering(filter_enabled=True)
+        self._handler.subject_id = "310"
+        self.data = self._handler.process_data_filtering(filter_enabled=True)
+        self._handler.subject_id = "311"
+        self.data2 = self._handler.process_data_filtering(filter_enabled=True)
+        self._handler.subject_id = "312"
+        self.data3 = self._handler.process_data_filtering(filter_enabled=True)
 
 
 if __name__ == "__main__":
