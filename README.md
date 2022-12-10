@@ -2,7 +2,11 @@
 
 &ensp;&ensp;Our software provides sensor data from a physical device that tracks a user’s physical activity. Raw sensor data does not have much value to an unsophisticated user, our application is designed to interpret that data visually in a way that is not only more appealing but also more informative.
 
+![image](https://user-images.githubusercontent.com/59776018/206876225-3573ff34-e326-4ce5-84a9-45f6f297e61e.png)
+
 ---
+
+# How To Run?
 
 # File Structure As Follows:
 
@@ -32,14 +36,10 @@
      - ***Note**: If you prefer to use SSH, use the SSH link instead of the HTTPS link; as well as if you prefer to use GitHub Desktop, use the GitHub Desktop link instead of the HTTPS link.*
 
 ### 2. Install the requirements:
-
    - Run Command: `pip install -r requirements.txt` in the directory you cloned the repository into or a CLI.
-     - ***Note**: As of now, there are no requirements for this project.*
 
 ### 3. Run the program:
-   >> ***Note**: The program is currently in development and is not yet ready for use.*
-   
-   ---
+   - Run Command: `python app.py` or `py app.py` in the directory you cloned the repository into or a CLI.
 
 # How To Contribute
 
