@@ -23,14 +23,16 @@ class DataHandler(InputModel):
         super().end_date = input_model.end_date
 
     def __repr__(self) -> str:
-        return (f"\nDataHandler:\n" +
-              f"- File: {self.file_index}\n" +
-              f"- Subject ID: {self.subject_id}\n" +
-              f"- Device OS: {self.device_OS}\n" +
-              f"- Is Standard Time: {self.is_standard_time}\n" +
-              f"- Start Date: {self.start_date}\n" +
-              f"- End Date: {self.end_date}\n" +
-              f"- Graph Filter: {self.graph_filter}\n")
+        return (
+            f"\nDataHandler:\n"
+            + f"- File: {self.file_index}\n"
+            + f"- Subject ID: {self.subject_id}\n"
+            + f"- Device OS: {self.device_OS}\n"
+            + f"- Is Standard Time: {self.is_standard_time}\n"
+            + f"- Start Date: {self.start_date}\n"
+            + f"- End Date: {self.end_date}\n"
+            + f"- Graph Filter: {self.graph_filter}\n"
+        )
 
     def process_data_filtering(self, filter_enabled: bool):
         """
@@ -41,25 +43,25 @@ class DataHandler(InputModel):
         * Filter the dataframe based on the input model
         * Return the filtered dataframe
         """
-      
+
         # Get the path date range
         date_range = fd.get_path_date_range(self.start_date, self.end_date)
-        
+
         # If the date range is empty return None
         if len(date_range) == 0:
             return pd.DataFrame()
-        
+
         path_list = self.get_path_list(date_range, self.file_index, self.subject_id)
-        
+
         if len(path_list) == 0:
             return pd.DataFrame()
-        
+
         # Load the csv files into a dataframe
         record_df = self.import_csv_data_frames(path_list)
 
         # Add the standard time column to the dataframe
         self.generate_standard_time_column(record_df)
-        
+
         # Replace Unix Timestamp (UTC) with Datetime (UTC) converted to timestamp
         record_df["Unix Timestamp (UTC)"] = record_df["Datetime (UTC)"].apply(fd.convert_utc_to_timestamp)
 
@@ -69,7 +71,7 @@ class DataHandler(InputModel):
         if filter_enabled:
             # Filter the dataframe based on the input model
             record_df = self.filter_data(record_df, self.graph_filter)
-        
+
         # Return the filtered dataframe
         return record_df
 
@@ -83,30 +85,30 @@ class DataHandler(InputModel):
         * Return the filtered dataframe
         """
         subject_id_list = ["310", "311", "312"]
-        
+
         # Get the path date range
         date_range = fd.get_path_date_range(self.start_date, self.end_date)
-        
+
         # If the date range is empty return None
         if len(date_range) == 0:
             return []
-        
+
         # Populate path list for each subject
         subject_df_list = []
-        
+
         for subject_id in subject_id_list:
             # Get path list for each subject
             path_list = self.get_path_list(date_range, self.file_index, subject_id)
-            
+
             if len(path_list) == 0:
                 return []
-            
+
             # Load the csv files into a dataframe
             record_df = self.import_csv_data_frames(path_list)
 
             # Add the standard time column to the dataframe
             self.generate_standard_time_column(record_df)
-            
+
             # Replace Unix Timestamp (UTC) with Datetime (UTC) converted to timestamp
             record_df["Unix Timestamp (UTC)"] = record_df["Datetime (UTC)"].apply(fd.convert_utc_to_timestamp)
 
@@ -116,16 +118,14 @@ class DataHandler(InputModel):
             if filter_enabled:
                 # Filter the dataframe based on the input model
                 record_df = self.filter_data(record_df, self.graph_filter)
-            
+
             subject_df_list.append(record_df)
-            
+
             # Add the subject id to the dataframe
             record_df["Subject ID"] = subject_id
-            
+
         return subject_df_list
-        
-            
-    
+
     def filter_data(self, record_df: pd.DataFrame, filters: list[str]):
         """
         Given a `dataframe` and a `list` of `filters`, return a `dataframe` with the `filters` applied
@@ -141,10 +141,10 @@ class DataHandler(InputModel):
             # If the column is datetime, skip it
             if column == "Unix Timestamp (UTC)":
                 continue
-            
+
             if column not in filters:
                 record_df = record_df.drop(column, axis=1)
-                
+
         return record_df
 
     def generate_standard_time_column(self, csv_data: pd.DataFrame):
@@ -156,7 +156,7 @@ class DataHandler(InputModel):
     def import_csv_data_frames(self, path_list):
         """
         Given a `relative` list of paths, return a `dataframe` with all the data
-        
+
         RETURN:
             The `path_list` is a list of paths relative to the current directory\n
             The `dataframe` will be a `concatenation` of all the csv files in the `path_list`
@@ -166,16 +166,18 @@ class DataHandler(InputModel):
     def filter_dates(self, csv_data: pd.DataFrame, start_date: str, end_date: str):
         """
         Removes the `datarows` that is not in the date range: `start_date` and `end_date`
-        
+
         Args:
             `csv_data` (pd.DataFrame) : The dataframe to filter
 
             `start_date` (str) : The start date of the range in the format of MM/DD/YYYY HH:MM AM/PM
-            
+
             `end_date` (str) : The end date of the range in the format of MM/DD/YYYY HH:MM AM/PM
         """
         # Remove the data that is not in the date range
-        csv_data = csv_data[(csv_data["Datetime (Standard)"] >= start_date) & (csv_data["Datetime (Standard)"] <= end_date)]
+        csv_data = csv_data[
+            (csv_data["Datetime (Standard)"] >= start_date) & (csv_data["Datetime (Standard)"] <= end_date)
+        ]
 
         return csv_data
 
@@ -192,10 +194,10 @@ class DataHandler(InputModel):
         for date in date_range:
             # Get the path of the data folder
             data_path = os.path.join(os.path.dirname(__file__), "..\data")
-            
+
             # Get the list of devices in the data folder
             device_folders = os.listdir(os.path.join(data_path, date))
-            
+
             # For each device folder, get the path to the file_index.csv file
             for device in device_folders:
                 # If the device is not in the filter, skip it
@@ -215,6 +217,60 @@ class DataHandler(InputModel):
         columns = pd.read_csv(f"{name_path}{index}", nrows=0).columns
         # Dont include the first column
         return [str(column) for column in columns][3:]
+
+    def extract_input_model(self, path):
+        """
+        Given a path, return the date of the file, subject id and device id
+        i.e: D:/Classes/Fall 2022/CSE 350/Final Prototype/Physical-Activity-Tracker-App/data/20200118/311/summary.csv
+        
+        Returns:
+        """
+
+        mobile_os = self.return_metadata_os(path)
+        start_date, end_date = self.define_date_range(path)
+        # Convert the date to the standard format
+        start_date = fd.format_utc_to_standard(start_date)
+        end_date = fd.format_utc_to_standard(end_date)
+        file_index = path.split("/")[-1]
+        subject_id = path.split("/")[-2]
+
+        # Create the input model
+        input_model = InputModel(
+            file_index=file_index,
+            subject_id=subject_id,
+            device_OS=mobile_os,
+            is_standard_time=True,
+            start_date=start_date,
+            end_date=end_date,
+        )
+
+        return input_model
+
+    def return_metadata_os(self, path):
+        """
+        Given a path to a summary.csv, return the metadata of the file
+        """
+        # read the metadata file
+        metadata_path = path.replace("summary", "metadata")
+        metadata_df = pd.read_csv(metadata_path)
+        
+        # read the Mobile OS 
+        mobile_os = metadata_df["Mobile OS"][0]
+        
+        return mobile_os
+    
+    def define_date_range(self, path):
+        """
+        Given a path to a summary file, extract the Datetime (UTC) first row and last row ignoring the header
+        """
+        # read the summary file
+        summary_df = pd.read_csv(path)
+        
+        # get the first and last row
+        start_date = summary_df["Datetime (UTC)"][1]
+        end_date = summary_df["Datetime (UTC)"][len(summary_df)-1]
+        
+        return start_date, end_date
     
     # DEPRECATED METHODS
     def parse_data_summary(self, csv_data: pd.DataFrame):
@@ -249,17 +305,18 @@ class DataHandler(InputModel):
             data_summary.append(summary)
 
         return data_summary
-    
+
     # TEST METHOD
     def TEST_DATA_HANDLER(self):
         # Add the variables to the DataHandler object
         self.start_date = "01/18/2020 12:00 AM"
         self.end_date = "01/21/2020 12:00 AM"
-        self.graph_filter = ['Eda avg', 'Movement intensity']
+        self.graph_filter = ["Eda avg", "Movement intensity"]
         self.file_index = "summary.csv"
         self.device_OS = "All Devices"
         self.subject_id = "All Subjects"
         self.is_standard_time = True
+
 
 # Testing only
 if __name__ == "__main__":
@@ -272,7 +329,6 @@ if __name__ == "__main__":
     data_handler = DataHandler()
     print(data_handler.get_headers("summary.csv"))
 
-
     """
     Testing the process_filtering function
     """
@@ -282,19 +338,18 @@ if __name__ == "__main__":
 
     # Process the data
     print(data_handler.process_data_filtering(True))
-    
 
     """
     Get the list of paths to the csv files with parsed data
     """
-    print ("\n\n#################################### Get Path List #####################################")
-    
+    print("\n\n#################################### Get Path List #####################################")
+
     date_range = fd.get_path_date_range(data_handler.start_date, data_handler.end_date)
-    
+
     # Get the list of paths
     path_list = data_handler.get_path_list(date_range, data_handler.file_index, data_handler.subject_id)
 
     for path in path_list:
         print(path)
-    
+
     print("\n")

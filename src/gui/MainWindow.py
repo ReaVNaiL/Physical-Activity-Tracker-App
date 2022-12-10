@@ -1,5 +1,7 @@
+import os
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFormLayout, QVBoxLayout, QGroupBox, QFormLayout, QListWidgetItem, QMessageBox
+from PyQt5.QtCore import QPoint
+from PyQt5.QtWidgets import QVBoxLayout
 
 
 class UI_MainWindow(object):
@@ -94,33 +96,53 @@ class UI_MainWindow(object):
 
         self.MainWindow.setObjectName("MainWindow")
         self.MainWindow.resize(1755, 769)
-        # self.MainWindow.setStyleSheet("")
 
         """"
         # Main Container
         """
         self.main_widget = QtWidgets.QWidget(self.MainWindow)
-        # self.main_widget.setStyleSheet("")
         self.main_widget.setObjectName("main_widget")
+        
+        # Create exit button
+        self.exit_button = QtWidgets.QPushButton(self.main_widget)
+        self.exit_button.setGeometry(QtCore.QRect(1697, 10, 35, 35))
+        self.exit_button.setObjectName("exit_button")
+        pixmap = QtGui.QPixmap(os.path.join(os.getcwd(), "src", "gui", "assets", "exit_button.png"))
+        self.exit_button.setIcon(QtGui.QIcon(pixmap))
+        self.exit_button.clicked.connect(self.exit_button_clicked)
+        
+        # Add Title Label
+        self.title_label = QtWidgets.QLabel(self.main_widget)
+        self.title_label.setGeometry(QtCore.QRect(40, 20, 450, 30))
+        self.title_label.setObjectName("title_label")
+        self.title_label.setText("Data Visualizer - Physical Tracker App")
+        self.title_label.setStyleSheet("color: rgb(255, 255, 255); font-size: 20px; font-weight: bold;")
+        
+        # Add Graph Label
+        self.graph_label = QtWidgets.QLabel(self.main_widget)
+        self.graph_label.setGeometry(QtCore.QRect(1100, 20, 450, 30))
+        self.graph_label.setObjectName("graph_label")
+        self.graph_label.setText("Graph")
+        self.graph_label.setStyleSheet("color: rgb(255, 255, 255); font-size: 20px; font-weight: bold;")
 
         """
         # Main Frames (Containers)
         """
         self.bottom_left_f = QtWidgets.QFrame(self.main_widget)
-        self.bottom_left_f.setGeometry(QtCore.QRect(20, 330, 451, 411))
+        self.bottom_left_f.setGeometry(QtCore.QRect(20, 350, 451, 411))
         self.bottom_left_f.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.bottom_left_f.setFrameShadow(QtWidgets.QFrame.Raised)
         self.bottom_left_f.setObjectName("bottom_left_f")
 
         self.right_f = QtWidgets.QFrame(self.main_widget)
-        self.right_f.setGeometry(QtCore.QRect(480, 10, 1251, 721))
+        self.right_f.setGeometry(QtCore.QRect(480, 60, 1251, 691))
         self.right_f.setStyleSheet("background-color: rgb(21,26,30);")
         self.right_f.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.right_f.setFrameShadow(QtWidgets.QFrame.Raised)
         self.right_f.setObjectName("right_f")
 
         self.top_left_f = QtWidgets.QFrame(self.main_widget)
-        self.top_left_f.setGeometry(QtCore.QRect(-10, 10, 481, 311))
+        self.top_left_f.setGeometry(QtCore.QRect(-10, 50, 481, 281))
         self.top_left_f.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.top_left_f.setFrameShadow(QtWidgets.QFrame.Raised)
         self.top_left_f.setObjectName("top_left_f")
@@ -138,7 +160,7 @@ class UI_MainWindow(object):
         # Graph Area
         """
         self.graph_area = QtWidgets.QScrollArea(self.right_f)
-        self.graph_area.setGeometry(QtCore.QRect(0, 0, 1251, 721))
+        self.graph_area.setGeometry(QtCore.QRect(0, 0, 1251, 691))
         self.graph_area.setStyleSheet("background-color: rgb(21,26,30);")
         self.graph_area.setWidgetResizable(True)
         self.graph_area.setObjectName("graph_area")
@@ -405,7 +427,22 @@ class UI_MainWindow(object):
         self.sync_plot_checkbox.setText(_translate("MainWindow", " Sync All Graphs"))
         self.lock_date_checkbox.setText(_translate("MainWindow", "Lock Date Axis"))
 
-
+    def exit_button_clicked(self):
+        self.MainWindow.close()
+        
+    def mouse_press_event(self, event):
+        try:
+            self.old_pos = event.globalPos()
+        except:
+            pass
+    def mouse_move_event(self, event):
+        try:
+            delta = QPoint(event.globalPos() - self.old_pos)
+            self.MainWindow.move(self.MainWindow.x() + delta.x(), self.MainWindow.y() + delta.y())
+            self.old_pos = event.globalPos()
+        except:
+            pass
+        
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

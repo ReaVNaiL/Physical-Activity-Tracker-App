@@ -5,7 +5,8 @@ import sys
 import pyqtgraph as pg
 
 """
-This module provides date-time aware axis
+This module provides date-time aware axis and it overwrites the built in axis
+with custom tickValues and tickStrings which are represented as date-time
 """
 
 __all__ = ["DateAxisItem"]

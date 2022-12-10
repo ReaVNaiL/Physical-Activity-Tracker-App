@@ -1,17 +1,58 @@
-/*
-ManjaroMix Style Sheet for QT Applications
-Author: Jaime A. Quiroga P.
-Company: GTRONICK
-Last updated: 25/02/2020, 15:42.
-Available at: https://github.com/GTRONICK/QSS/blob/master/ManjaroMix.qss
-*/
-
 #graph_area{
     background-color:#151a1e;
 }
 
-QMainWindow {
-	background-color:#151a1e;
+
+#right_f {
+	border-style: solid;
+	border-color: #16a085;
+	border-width: 3px;
+}
+
+#exit_button {
+	background-color:#025f61;
+}
+
+#exit_button:hover{
+	border-style: solid;
+	border-color: #16a085;
+	border-width: 3px;
+	border-radius: 5px;
+	padding: 2px;
+	background-color: #980000;
+}
+
+QListWidget {
+	background-color: #151a1e;
+	border-color: #16a085;
+	border-style: solid;
+	border-width: 3px;
+	color: #d3dae3;
+}
+
+QSizeGrip {
+	background-color: transparent;
+}
+
+QSplitter::handle {
+	background-color: #16a08400;
+}
+
+QMessageBox {
+	background-color: #21272c;
+	border-color: #16a085;
+	border-style: solid;
+	border-width: 2px;
+	text-align: center;
+	padding-right: 110px;
+}
+
+QMainWindow, #main_widget, #second_window_central_widget {
+	border-color: #16a085;
+	border-style: solid;
+	border-width: 3px;
+	border-radius: 20px;
+	background: qlineargradient(spread:pad, x1:1, y1:1, x2:0.0266818, y2:0, stop:0 rgba(33, 39, 44, 255), stop:1 rgba(67, 97, 97, 255));
 }
 QCalendar {
 	background-color: #151a1e;
@@ -68,8 +109,8 @@ QToolButton:pressed{
 }
 QPushButton{
 	border-style: solid;
-	border-color: #026154;
-	border-width: 1px;
+	border-color: #16a085;
+	border-width: 2px;
 	border-radius: 5px;
 	color: #d3dae3;
 	padding: 2px;
@@ -93,6 +134,7 @@ QPushButton:hover{
 	padding: 2px;
 	background-color: #6e6657;
 }
+
 QPushButton:pressed{
 	border-style: solid;
 	border-color: #cc9734;
@@ -274,7 +316,7 @@ QCheckBox::indicator:checked {
 	border-width: 1px;
 	border-color: #cc9734;
 	color: #000000;
-	background-color: qradialgradient(cx:0.4, cy:0.4, radius: 1.5,fx:0, fy:0, stop:0 #1e282c, stop:0.3 #1e282c, stop:0.4 #4fa08b, stop:0.5 #1e282c, stop:1 #1e282c);
+	background-color: qradialgradient(spread:pad, cx:0.506, cy:0.505682, radius:0.5, fx:0.505545, fy:0.506, stop:0 rgba(255, 255, 255, 255), stop:0.1 rgba(255, 255, 255, 255), stop:0.181818 rgba(255, 0, 0, 205), stop:0.272727 rgba(255, 76, 76, 205), stop:0.4 rgba(255, 125, 125, 51), stop:0.494318 rgba(255, 151, 151, 92), stop:0.642045 rgba(255, 255, 255, 0));
 }
 QCheckBox::indicator:unchecked {
 
@@ -371,6 +413,14 @@ QComboBox::hover {
 	border-color: #cc9734;
 }
 
+QCoboBox::drop-down {
+	background-color: #26302e;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 4px;
+	border-color: #4fa08b;
+}
+
 QDial {
 	background: #16a085;
 }
@@ -389,7 +439,11 @@ QToolBox::tab:selected {
 }
 QScrollArea {
 	color: #3a3a3a;
-	background-color:#1b1b1b;
+	background-color:#151a1e;
+	border-style: solid;
+	border-color:#16a085;
+	border-width: 2px;
+	/* border-radius: 20px; */
 }
 QSlider::groove:horizontal {
 	height: 5px;
@@ -441,97 +495,40 @@ QScrollBar:vertical {
 	margin: 20px 0px 20px 0px;
 	background: transparent;
 }
-QScrollBar::handle:horizontal {
-	background: #27d49a;
-	border-style: transparent;
-	border-radius: 4px;
-	min-width: 25px;
-}
-QScrollBar::handle:horizontal:hover {
-	background: #f0bc5d;
-	border-style: transparent;
-	border-radius: 4px;
-	min-width: 25px;
-}
 QScrollBar::handle:vertical {
 	background: #27d49a;
-	border-style: transparent;
-	border-radius: 4px;
+	/* border-style: transparent; */
 	min-height: 25px;
+	border: 1px solid #191919;
 }
 QScrollBar::handle:vertical:hover {
 	background: #f0bc5d;
-	border-style: transparent;
-	border-radius: 4px;
+	/* border-style: transparent; */
 	min-height: 25px;
 }
-QScrollBar::add-line:horizontal {
-   border: 2px transparent #f0bc5d;
-   border-top-right-radius: 4px;
-   border-bottom-right-radius: 4px;
-   background: #27d49a;
-   width: 20px;
-   subcontrol-position: right;
-   subcontrol-origin: margin;
-}
-QScrollBar::add-line:horizontal:pressed {
-   border: 2px transparent #f0bc5d;
-   border-top-right-radius: 4px;
-   border-bottom-right-radius: 4px;
-   background: rgb(181,181,181);
-   width: 20px;
-   subcontrol-position: right;
-   subcontrol-origin: margin;
-}
 QScrollBar::add-line:vertical {
-   border: 2px transparent #f0bc5d;
-   border-bottom-left-radius: 4px;
-   border-bottom-right-radius: 4px;
+   border: 1px solid #191919;
    background: #27d49a;
    height: 20px;
    subcontrol-position: bottom;
    subcontrol-origin: margin;
 }
 QScrollBar::add-line:vertical:pressed {
-   border: 2px transparent #f0bc5d;
-   border-bottom-left-radius: 4px;
-   border-bottom-right-radius: 4px;
+   border: 1px solid #191919;
    background: rgb(181,181,181);
    height: 20px;
    subcontrol-position: bottom;
    subcontrol-origin: margin;
 }
-QScrollBar::sub-line:horizontal {
-   border: 2px transparent #f0bc5d;
-   border-top-left-radius: 4px;
-   border-bottom-left-radius: 4px;
-   background: #27d49a;
-   width: 20px;
-   subcontrol-position: left;
-   subcontrol-origin: margin;
-}
-QScrollBar::sub-line:horizontal:pressed {
-   border: 2px transparent #f0bc5d;
-   border-top-left-radius: 4px;
-   border-bottom-left-radius: 4px;
-   background: rgb(181,181,181);
-   width: 20px;
-   subcontrol-position: left;
-   subcontrol-origin: margin;
-}
 QScrollBar::sub-line:vertical {
-   border: 2px transparent #f0bc5d;
-   border-top-left-radius: 4px;
-   border-top-right-radius: 4px;
+   border: 1px solid #191919;
    background: #27d49a;
    height: 20px;
    subcontrol-position: top;
    subcontrol-origin: margin;
 }
 QScrollBar::sub-line:vertical:pressed {
-   border: 2px transparent #f0bc5d;
-   border-top-left-radius: 4px;
-   border-top-right-radius: 4px;
+   border: 1px solid #191919;
    background: rgb(181,181,181);
    height: 20px;
    subcontrol-position: top;

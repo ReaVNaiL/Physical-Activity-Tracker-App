@@ -6,12 +6,13 @@ from PyQt5.QtWidgets import QMessageBox
 class AlertBox:
     def __init__(self, message: str) -> None:
         self.box = QMessageBox()
-        self.box.setText(message)
+        self.box.setInformativeText(message + "\t   ")
+        self.box.setIcon(QMessageBox.Warning)
         self.box.setStandardButtons(QMessageBox.Ok)
         
         # if os is Windows set the FramelessWindowHint
         if sys.platform == "win32" or sys.platform == "win64" or sys.platform == "cygwin":    
-            self.box.setWindowFlags(Qt.FramelessWindowHint)
+            self.box.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         
         # Make the window moveable
         self.box.mousePressEvent = self.mouse_press_event
