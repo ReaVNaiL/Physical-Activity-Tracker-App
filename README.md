@@ -60,3 +60,46 @@
 
 ### *If you have any questions, please reach out in Teams. If having issues with git, please reach out to merge the files manually.*
 
+# User Manual:
+## Main Window:
+### 1. Import Data
+Click on Import Data to choose a `data` source.
+### 2. Clear Data
+Click on Clear Data to remove imported `data` from memory.
+### 3. Index
+Click on this dropdown menu to choose whether to load `data` from the `metadata.csv` or `summary.csv` file.
+### 4. Subject
+Click on this dropdown menu to select which user’s `data` to load, or choose “All Subjects” to load everyone’s data.
+### 5. Device
+Click on this dropdown menu to specify `Android` or `iOS`, or choose All Devices.
+### 6. Date Range
+The Physical Activity Tracker Application will only display `data` within the chosen `date range`. To change values, you can click on a number in the date picker window and then type, or click the up and down arrows, or use the up and down arrows on your keyboard.
+### 7. Standard Time
+By default this checkbox is clicked, but unclicked, the time will be converted to `UTC` instead. 
+### 8. Save
+Click this button to `save` your changes and the second window will appear which contains your data’s headers. From here, choose which `headers` you will like to be plotted by moving them to the second column as seen below.
+
+## Data Display:
+### 1. Legend
+The `legend` in the upper-right corner of the graph will show you what each color in the `graph` refers to. You can also click each member on the `legend` to hide or reshow the relevant data.
+### 2. Title
+The `title` will display above each `graph` to identify what kind of data is being displayed.
+### 3. Right Click Menu
+`Right` clicking on a `graph` brings up a menu that allows you to manipulate the graph in various ways:
+- `View All`: Clicking this resets the graph back to its original state of viewing the entire graph
+- `X-Axis`: This opens a menu that allows the user to manipulate the X axis in various ways. These include being able to select for manual or automatic scaling of the X axis, being able to invert the X axis, being able to enable mouse controls for the X axis, and being able to like the X axis to another axis.
+- `Y-Axis`:  This opens a menu that allows the user to manipulate the Y axis in various ways, similar to the X axis.
+- `Mouse Mode`: This allows you to switch between 3 Button mode and 1 Button mode. 1 Button mode allows the user to click and drag a rectangle over the graph to zoom into the selected area.
+### 4. Plot Options
+In the right click menu, there exists another menu that allows you to further manipulate the data the graph is depicting:
+- `Transforms`: This section allows the user to apply various transforms to the data. These transforms include: Power Spectrum, Log(X), Log(Y), dy/dx, and Y vs. Y’.
+- `Downsample`: This allows the user to downsample the data.
+- `Average`: When selected, displays the average of the graphs.
+- `Alpha`: Change the alpha (transparency) value of the graph.
+- `Grid`: This section allows the user to modify the visibility of the X lines on the grid, the Y lines on the grid, and the opacity of the grid lines.
+- `Points`: Allows the user to toggle the display of points on the graph.
+### 5. Export
+- This allows the user to export the current graph as an image file, SVG file, Matplotlib window, or CSV from plot data. It also allows the user to select which parameters are carried through the export.
+
+
+
